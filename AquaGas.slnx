@@ -3,6 +3,6 @@
     <Project Path="src/AquaGas.API/AquaGas.API.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/AquaGas.Tests/AquaGas.Tests.csproj" />
+    <Project Path="tests/AquaGas.UnitTests/AquaGas.UnitTests.csproj" />
   </Folder>
 </Solution>
