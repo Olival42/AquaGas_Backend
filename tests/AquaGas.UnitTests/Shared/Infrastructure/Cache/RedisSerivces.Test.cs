@@ -1,7 +1,7 @@
 using Xunit;
 using Moq;
 using StackExchange.Redis;
-using AquaGas.Api.Shared.Infrastructure.Cache.Interfaces;
+using AquaGas.Api.Shared.Infrastructure.Cache;
 
 public class RedisServiceTests
 {

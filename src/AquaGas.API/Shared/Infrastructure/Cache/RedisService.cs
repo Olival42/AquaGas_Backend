@@ -1,4 +1,4 @@
-namespace AquaGas.Api.Shared.Infrastructure.Cache.Interfaces;
+namespace AquaGas.Api.Shared.Infrastructure.Cache;
 
 using StackExchange.Redis;
 
