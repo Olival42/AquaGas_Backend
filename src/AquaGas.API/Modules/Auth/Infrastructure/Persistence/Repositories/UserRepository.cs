@@ -15,6 +15,11 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
+    public async Task AddAsync(User user)
+    {
+        await _context.Users.AddAsync(user);
+    }
+
     public async Task<User?> GetByUserNameAsync(string userName)
     {
         var parsed = UserName.Create(userName);
@@ -31,6 +36,12 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
+    }
+
+    public async Task<bool> AnyByUserNameAsync(string userName)
+    {
+        return await _context.Users
+            .AnyAsync(u => u.UserName == UserName.Create(userName).Value && u.IsActive);
     }
 
 }

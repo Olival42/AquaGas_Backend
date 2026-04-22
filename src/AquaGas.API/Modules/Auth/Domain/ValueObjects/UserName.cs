@@ -21,12 +21,12 @@ public sealed class UserName
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result<UserName>.Fail(
-                Error.Validation("Username cannot be empty.")
+                Error.Validation("Username cannot be empty.", "UserName")
             );
 
         if (!_regex.IsMatch(value))
             return Result<UserName>.Fail(
-                Error.Validation("Username must be between 3 and 50 characters and contain only letters and numbers.")
+                Error.Validation("Username must be between 3 and 50 characters and contain only letters and numbers.", "UserName")
             );
 
         return Result<UserName>.Success(new UserName(value));

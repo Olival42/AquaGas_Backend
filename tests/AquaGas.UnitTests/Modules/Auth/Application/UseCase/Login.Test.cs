@@ -32,7 +32,7 @@ public class LoginUseCaseTests
         => new(
             UserName.Create("john123").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -240,7 +240,7 @@ public class LoginUseCaseTests
         var user2 = new User(
             UserName.Create("user2").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 

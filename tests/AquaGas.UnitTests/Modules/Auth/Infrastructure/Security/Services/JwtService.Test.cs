@@ -30,7 +30,7 @@ public class JwtServiceTests
         var user = new User(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -52,7 +52,7 @@ public class JwtServiceTests
         var user = new User(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -70,7 +70,7 @@ public class JwtServiceTests
         var user = new User(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -90,7 +90,7 @@ public class JwtServiceTests
         var user = new User(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 

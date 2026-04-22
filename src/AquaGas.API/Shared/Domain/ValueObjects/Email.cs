@@ -17,14 +17,14 @@ public sealed class Email
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result<Email>.Fail(
-                    Error.Validation("Email cannot be empty")
+                    Error.Validation("Email cannot be empty", "Email")
                 );
 
         var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
         if (!regex.IsMatch(value))
             return Result<Email>.Fail(
-                        Error.Validation("Invalid email")
+                        Error.Validation("Invalid email", "Email")
                     );
 
         return Result<Email>.Success(new Email(value.ToLower()));

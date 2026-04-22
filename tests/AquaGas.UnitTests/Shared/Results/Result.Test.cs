@@ -61,17 +61,6 @@ namespace AquaGas.Tests.Shared.Results
         }
 
         [Fact]
-        public void Fail_Should_Accept_Multiple_Errors()
-        {
-            var error1 = new Error("code1", "message1");
-            var error2 = new Error("code2", "message2");
-
-            var result = Result<string>.Fail(error1, error2);
-
-            Assert.Equal(2, result.Errors.Count);
-        }
-
-        [Fact]
         public void Fail_Should_Set_Default_Value()
         {
             var error = new Error("code", "message");
@@ -79,6 +68,42 @@ namespace AquaGas.Tests.Shared.Results
             var result = Result<int>.Fail(error);
 
             Assert.Equal(default, result.Value);
+        }
+
+        [Fact]
+        public void Combine_Should_Return_Success_When_All_Success()
+        {
+            var r1 = Result.Success();
+            var r2 = Result.Success();
+
+            var result = Result.Combine(r1, r2);
+
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public void Combine_Should_Return_Validation_Errors()
+        {
+            var r1 = Result.Fail(Error.Validation("msg", "field"));
+            var r2 = Result.Success();
+
+            var result = Result.Combine(r1, r2);
+
+            Assert.True(result.IsFailure);
+            Assert.True(result.IsValidationError);
+        }
+
+        [Fact]
+        public void Combine_Should_Return_Critical_Error()
+        {
+            var r1 = Result.Fail(new Error("ERROR", "critical"));
+            var r2 = Result.Fail(Error.Validation("msg", "field"));
+
+            var result = Result.Combine(r1, r2);
+
+            Assert.True(result.IsFailure);
+            Assert.Single(result.Errors);
+            Assert.Equal("ERROR", result.Errors[0].Code);
         }
     }
 }

@@ -17,7 +17,7 @@ public class UserServiceTests
         => new(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             id
         );
 

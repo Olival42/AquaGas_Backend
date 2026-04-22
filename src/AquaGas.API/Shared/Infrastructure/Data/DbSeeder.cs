@@ -16,7 +16,7 @@ public static class DbSeeder
         if (!context.Users.Any())
         {
             var employee = new Employee(
-                EmployeeName.Create("Gerente Inicial"),
+                EmployeeName.Create("Gerente Inicial").Value!,
                 Cpf.Create("52998224725").Value!,
                 Email.Create("gerente@aquagas.local").Value!,
                 Phone.Create("11999999999").Value!
@@ -25,7 +25,7 @@ public static class DbSeeder
             var usuario = new User(
                 UserName.Create("gerente123").Value!,
                 hasher.Hash("Admin@123"),
-                Role.MANAGER,
+                Role.Manager,
                 employee.Id
             );
 

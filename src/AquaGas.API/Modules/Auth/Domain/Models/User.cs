@@ -34,4 +34,5 @@ public class User
     public void Deactive() => IsActive = false;
     public void Active() => IsActive = true;
     public void UpdatePassword(string newHash) => PasswordHash = newHash;
+    public void UpdateRole(Role role) => Role = role;
 }

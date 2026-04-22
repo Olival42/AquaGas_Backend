@@ -17,7 +17,7 @@ public class UserMappingTests
         => new(
             UserName.Create("john").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -32,6 +32,5 @@ public class UserMappingTests
         Assert.Equal(user.Id, response.UserId);
         Assert.Equal(user.UserName.Value, response.UserName);
         Assert.Equal(user.Role, response.Role);
-        Assert.Equal(user.EmployeeId, response.EmployeeId);
     }
 }

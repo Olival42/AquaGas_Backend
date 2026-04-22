@@ -17,7 +17,7 @@ public class PasswordTests
         var result = Password.Create("");
 
         Assert.False(result.IsSuccess);
-        Assert.Equal("Password cannot empty", result.Errors![0].Message);
+        Assert.Equal("Password cannot be empty", result.Errors![0].Message);
     }
 
     [Fact]

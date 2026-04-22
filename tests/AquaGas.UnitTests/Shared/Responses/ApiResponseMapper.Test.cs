@@ -3,63 +3,98 @@ using AquaGas.Api.Shared.Results;
 using AquaGas.Api.Shared.Responses;
 using AquaGas.Api.Shared.Errors;
 
-namespace AquaGas.Tests.Shared.Responses
+namespace AquaGas.Tests.Shared.Responses;
+
+public class ApiResponseMapperTests
 {
-    public class ApiResponseMapperTests
+    [Fact]
+    public void ToApiResponse_Should_Map_Success()
     {
-        [Fact]
-        public void ToApiResponse_Should_Map_Success()
-        {
-            var result = Result<string>.Success("dados");
+        var result = Result<string>.Success("dados");
 
-            var response = result.ToApiResponse();
+        var response = result.ToApiResponse();
 
-            Assert.True(response.Success);
-            Assert.Equal("dados", response.Data);
-            Assert.Null(response.Error);
-        }
+        Assert.True(response.Success);
+        Assert.Equal("dados", response.Data);
+        Assert.Null(response.Error);
+    }
 
-        [Fact]
-        public void ToApiResponse_Should_Map_Failure()
-        {
-            var error = new Error("ERROR", "Something wrong");
-            var result = Result<string>.Fail(error);
+    [Fact]
+    public void ToApiResponse_Should_Map_Simple_Failure()
+    {
+        var result = Result<string>.Fail(
+            new Error("ERROR", "Something wrong")
+        );
 
-            var response = result.ToApiResponse();
+        var response = result.ToApiResponse();
 
-            Assert.False(response.Success);
-            Assert.NotNull(response.Error);
-            Assert.Equal("ERROR", response.Error!.Code);
-        }
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        Assert.Equal("ERROR", response.Error!.Code);
+        Assert.Equal("Something wrong", response.Error.Message);
+        Assert.Null(response.Error.Details);
+    }
 
-        [Fact]
-        public void ToApiResponse_Should_Map_Validation_Errors()
-        {
-            var error1 = new Error("VALIDATION_ERROR", "Name required");
-            var error2 = new Error("VALIDATION_ERROR", "Email invalid");
+    [Fact]
+    public void ToApiResponse_Should_Group_Validation_Errors_By_Field()
+    {
+        var result = Result<string>.Fail(
+            new Error("VALIDATION_ERROR", "Name required") { Field = "Name" },
+            new Error("VALIDATION_ERROR", "Email invalid") { Field = "Email" }
+        );
 
-            var result = Result<string>.Fail(error1, error2);
+        var response = result.ToApiResponse();
 
-            var response = result.ToApiResponse();
+        Assert.False(response.Success);
+        Assert.NotNull(response.Error);
+        Assert.Equal("VALIDATION_ERROR", response.Error!.Code);
 
-            Assert.False(response.Success);
-            Assert.NotNull(response.Error);
-            Assert.Equal("VALIDATION_ERROR", response.Error!.Code);
-            Assert.Equal(2, response.Error.Details!.Count);
-        }
+        var details = response.Error.Details as List<DataErrors>;
 
-        [Fact]
-        public void ToApiResponse_Should_Use_First_Error_When_Not_Validation()
-        {
-            var error1 = new Error("ERROR_1", "First error");
-            var error2 = new Error("ERROR_2", "Second error");
+        Assert.NotNull(details);
+        Assert.Equal(2, details.Count);
 
-            var result = Result<string>.Fail(error1, error2);
+        Assert.Contains(details, d =>
+            d.Field == "Name" && d.Message.Contains("Name required"));
 
-            var response = result.ToApiResponse();
+        Assert.Contains(details, d =>
+            d.Field == "Email" && d.Message.Contains("Email invalid"));
+    }
 
-            Assert.Equal("ERROR_1", response.Error!.Code);
-            Assert.Equal("First error", response.Error!.Message);
-        }
+    [Fact]
+    public void ToApiResponse_Should_Group_Multiple_Errors_Same_Field()
+    {
+        var result = Result<string>.Fail(
+            new Error("VALIDATION_ERROR", "Name required") { Field = "Name" },
+            new Error("VALIDATION_ERROR", "Name too short") { Field = "Name" }
+        );
+
+        var response = result.ToApiResponse();
+
+        var details = response.Error!.Details as List<DataErrors>;
+
+        Assert.Single(details!);
+
+        var nameErrors = details!.First(d => d.Field == "Name");
+
+        Assert.Equal(2, nameErrors.Message.Count);
+        Assert.Contains("Name required", nameErrors.Message);
+        Assert.Contains("Name too short", nameErrors.Message);
+    }
+
+    [Fact]
+    public void ToApiResponse_Should_Fallback_To_First_Error_When_Not_Validation()
+    {
+        var result = Result<string>.Fail(
+            new Error("ERROR_1", "First error"),
+            new Error("ERROR_2", "Second error")
+        );
+
+        var response = result.ToApiResponse();
+
+        Assert.False(response.Success);
+        Assert.Equal("ERROR_1", response.Error!.Code);
+        Assert.Equal("First error", response.Error.Message);
+        Assert.Null(response.Error.Details);
     }
 }

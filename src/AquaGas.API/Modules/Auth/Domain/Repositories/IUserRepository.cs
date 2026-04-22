@@ -4,6 +4,8 @@ namespace AquaGas.Api.Modules.Auth.Domain.Repositories;
 
 public interface IUserRepository
 {
+    Task AddAsync(User user);
     Task<User?> GetByUserNameAsync(string userName);
     Task<User?> GetByIdAsync(Guid id);
+    Task<bool> AnyByUserNameAsync(string userName);
 }

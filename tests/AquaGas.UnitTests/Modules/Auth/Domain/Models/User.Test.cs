@@ -13,7 +13,7 @@ public class UserTests
         var user = new User(
             username,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -26,7 +26,7 @@ public class UserTests
         var user = new User(
             UserName.Create("john123").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -39,7 +39,7 @@ public class UserTests
         var user = new User(
             UserName.Create("john123").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -54,7 +54,7 @@ public class UserTests
         var user = new User(
             UserName.Create("john123").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
@@ -70,12 +70,57 @@ public class UserTests
         var user = new User(
             UserName.Create("john123").Value!,
             "old_hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
         user.UpdatePassword("new_hash");
 
         Assert.Equal("new_hash", user.PasswordHash);
+    }
+
+    [Fact]
+    public void Should_Update_Role()
+    {
+        var user = new User(
+            UserName.Create("john123").Value!,
+            "hash",
+            Role.Manager,
+            Guid.NewGuid()
+        );
+
+        user.UpdateRole(Role.Employee);
+
+        Assert.Equal(Role.Employee, user.Role);
+    }
+
+    [Fact]
+    public void Should_Change_Role_From_Employee_To_Manager()
+    {
+        var user = new User(
+            UserName.Create("john123").Value!,
+            "hash",
+            Role.Employee,
+            Guid.NewGuid()
+        );
+
+        user.UpdateRole(Role.Manager);
+
+        Assert.Equal(Role.Manager, user.Role);
+    }
+
+    [Fact]
+    public void Should_Keep_Role_When_Same_Role_Is_Set()
+    {
+        var user = new User(
+            UserName.Create("john123").Value!,
+            "hash",
+            Role.Manager,
+            Guid.NewGuid()
+        );
+
+        user.UpdateRole(Role.Manager);
+
+        Assert.Equal(Role.Manager, user.Role);
     }
 }

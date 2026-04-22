@@ -1,6 +1,7 @@
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using AquaGas.Api.Shared.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 public class ErrorResponseHelperMappingTests
 {
@@ -32,5 +33,37 @@ public class ErrorResponseHelperMappingTests
             new { });
 
         Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public void Should_Map_Conflict()
+    {
+        var result = ErrorResponseHelper.ToActionResult(
+            "CONFLICT",
+            new { });
+
+        Assert.IsType<ConflictObjectResult>(result);
+    }
+
+    [Fact]
+    public void Should_Map_Default_To_500()
+    {
+        var result = ErrorResponseHelper.ToActionResult(
+            "UNKNOWN",
+            new { });
+
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(500, objectResult.StatusCode);
+    }
+
+    [Fact]
+    public void Should_Create_BadRequest_From_ModelState()
+    {
+        var modelState = new ModelStateDictionary();
+        modelState.AddModelError("Name", "Name is required");
+
+        var result = ErrorResponseHelper.BadRequestFromModelState(modelState);
+
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 }

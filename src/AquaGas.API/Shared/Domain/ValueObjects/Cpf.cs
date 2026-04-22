@@ -17,14 +17,14 @@ public sealed class Cpf
     {
         if (string.IsNullOrWhiteSpace(value))
             return Result<Cpf>.Fail(
-                        Error.Validation("CPF cannot be empty")
+                        Error.Validation("CPF cannot be empty", "CPF")
                     );
 
         value = value.Replace(".", "").Replace("-", "");
 
         if (!IsValid(value))
             return Result<Cpf>.Fail(
-                        Error.Validation("Invalid CPF")
+                        Error.Validation("Invalid CPF", "CPF")
                     );
 
         return Result<Cpf>.Success(new Cpf(value));
