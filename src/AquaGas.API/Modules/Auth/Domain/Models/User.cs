@@ -1,8 +1,9 @@
 namespace AquaGas.Api.Modules.Auth.Domain.Models;
 
+using AquaGas.Api.Modules.Auth.Application.Services;
 using AquaGas.Api.Modules.Auth.Domain.Enums;
 using AquaGas.Api.Modules.Auth.Domain.ValueObjects;
-using  AquaGas.Api.Modules.Employee.Domain.Models;
+using AquaGas.Api.Modules.Employee.Domain.Models;
 
 public class User
 {
@@ -32,7 +33,38 @@ public class User
     }
 
     public void Deactive() => IsActive = false;
+
     public void Active() => IsActive = true;
-    public void UpdatePassword(string newHash) => PasswordHash = newHash;
-    public void UpdateRole(Role role) => Role = role;
+
+    public bool ChangeUserName(UserName? newUserName)
+    {
+        if (newUserName is null || UserName == newUserName)
+            return false;
+
+        UserName = newUserName;
+        return true;
+    }
+
+    public bool ChangeRole(Role? newRole)
+    {
+        if (newRole is null || Role == newRole.Value)
+            return false;
+
+        Role = newRole.Value;
+        return true;
+    }
+
+    public bool ChangePassword(Password? password, IPasswordHasher hasher)
+    {
+        if (password is null)
+            return false;
+
+        var newHash = hasher.Hash(password.Value);
+
+        if (PasswordHash == newHash)
+            return false;
+
+        PasswordHash = newHash;
+        return true;
+    }
 }

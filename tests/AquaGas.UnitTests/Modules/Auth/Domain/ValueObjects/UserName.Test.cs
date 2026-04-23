@@ -54,4 +54,41 @@ public class UserNameTests
 
         Assert.False(result.IsSuccess);
     }
+
+    [Fact]
+    public void Should_Be_Equal_When_Same_Value()
+    {
+        var a = UserName.Create("john123").Value!;
+        var b = UserName.Create("john123").Value!;
+
+        Assert.True(a.Equals(b));
+        Assert.True(a == b);
+    }
+
+    [Fact]
+    public void Should_Not_Be_Equal_When_Different_Value()
+    {
+        var a = UserName.Create("john123").Value!;
+        var b = UserName.Create("maria123").Value!;
+
+        Assert.False(a.Equals(b));
+        Assert.True(a != b);
+    }
+
+    [Fact]
+    public void Should_Not_Be_Equal_To_Null()
+    {
+        var a = UserName.Create("john123").Value!;
+
+        Assert.False(a.Equals(null));
+    }
+
+    [Fact]
+    public void Should_Have_Same_HashCode_When_Same_Value()
+    {
+        var a = UserName.Create("john123").Value!;
+        var b = UserName.Create("john123").Value!;
+
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
 }

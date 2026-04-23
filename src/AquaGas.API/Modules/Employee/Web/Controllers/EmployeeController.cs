@@ -18,22 +18,19 @@ public class EmployeeController : ControllerBase
     private readonly IGetAllEmployees _getAllEmployees;
     private readonly IDeactiveEmployee _deactiveEmployee;
     private readonly IUpdateEmployee _updateEmployee;
-    private readonly IResetPassword _resetPassword;
 
     public EmployeeController(
         IRegisterEmployee registerEmployee,
         IGetByIdEmployee getByIdEmployee,
         IGetAllEmployees getAllEmployees,
         IDeactiveEmployee deactiveEmployee,
-        IUpdateEmployee updateEmployee,
-        IResetPassword resetPassword)
+        IUpdateEmployee updateEmployee)
     {
         _registerEmployee = registerEmployee;
         _getByIdEmployee = getByIdEmployee;
         _getAllEmployees = getAllEmployees;
         _deactiveEmployee = deactiveEmployee;
         _updateEmployee = updateEmployee;
-        _resetPassword = resetPassword;
     }
 
     [Authorize]
@@ -133,23 +130,5 @@ public class EmployeeController : ControllerBase
         }
 
         return Ok(result.ToApiResponse());
-    }
-
-    [Authorize(Roles = "Manager")]
-    [HttpPatch("{id}/reset-password")]
-    public async Task<IActionResult> ResetPassword(Guid id, ResetPasswordInput input)
-    {
-        var result = await _resetPassword.Execute(id, input);
-
-        if (result.IsFailure)
-        {
-            var firstError = result.Errors.First();
-            return ErrorResponseHelper.ToActionResult(
-                firstError.Code,
-                result.ToApiResponse()
-            );
-        }
-
-        return NoContent();
     }
 }

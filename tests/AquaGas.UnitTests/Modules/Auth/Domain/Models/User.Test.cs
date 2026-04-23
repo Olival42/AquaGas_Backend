@@ -1,21 +1,18 @@
 using Xunit;
+using Moq;
 using AquaGas.Api.Modules.Auth.Domain.Models;
 using AquaGas.Api.Modules.Auth.Domain.Enums;
 using AquaGas.Api.Modules.Auth.Domain.ValueObjects;
+using AquaGas.Api.Modules.Auth.Application.Services;
 
 public class UserTests
 {
+    private readonly Mock<IPasswordHasher> _hasher = new();
+
     [Fact]
     public void Should_Create_User_As_Active()
     {
-        var username = UserName.Create("john123").Value!;
-
-        var user = new User(
-            username,
-            "hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
         Assert.True(user.IsActive);
     }
@@ -23,12 +20,7 @@ public class UserTests
     [Fact]
     public void Should_Set_CreatedAt()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
         Assert.True(user.CreatedAt <= DateTime.UtcNow);
     }
@@ -36,12 +28,7 @@ public class UserTests
     [Fact]
     public void Should_Deactivate_User()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
         user.Deactive();
 
@@ -51,12 +38,7 @@ public class UserTests
     [Fact]
     public void Should_Activate_User()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
         user.Deactive();
         user.Active();
@@ -65,62 +47,122 @@ public class UserTests
     }
 
     [Fact]
-    public void Should_Update_Password()
+    public void Should_Change_UserName_When_Different()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "old_hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
-        user.UpdatePassword("new_hash");
+        var changed = user.ChangeUserName(UserName.Create("maria").Value!);
 
-        Assert.Equal("new_hash", user.PasswordHash);
+        Assert.True(changed);
+        Assert.Equal("maria", user.UserName.Value);
     }
 
     [Fact]
-    public void Should_Update_Role()
+    public void Should_Not_Change_UserName_When_Same()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "hash",
-            Role.Manager,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
-        user.UpdateRole(Role.Employee);
+        var changed = user.ChangeUserName(UserName.Create("john123").Value!);
 
-        Assert.Equal(Role.Employee, user.Role);
+        Assert.False(changed);
     }
 
     [Fact]
-    public void Should_Change_Role_From_Employee_To_Manager()
+    public void Should_Not_Change_UserName_When_Null()
     {
-        var user = new User(
-            UserName.Create("john123").Value!,
-            "hash",
-            Role.Employee,
-            Guid.NewGuid()
-        );
+        var user = CreateUser();
 
-        user.UpdateRole(Role.Manager);
+        var changed = user.ChangeUserName(null);
 
+        Assert.False(changed);
+    }
+
+    [Fact]
+    public void Should_Change_Role_When_Different()
+    {
+        var user = CreateUser(Role.Employee);
+
+        var changed = user.ChangeRole(Role.Manager);
+
+        Assert.True(changed);
         Assert.Equal(Role.Manager, user.Role);
     }
 
     [Fact]
-    public void Should_Keep_Role_When_Same_Role_Is_Set()
+    public void Should_Not_Change_Role_When_Same()
     {
-        var user = new User(
+        var user = CreateUser(Role.Manager);
+
+        var changed = user.ChangeRole(Role.Manager);
+
+        Assert.False(changed);
+    }
+
+    [Fact]
+    public void Should_Not_Change_Role_When_Null()
+    {
+        var user = CreateUser();
+
+        var changed = user.ChangeRole(null);
+
+        Assert.False(changed);
+    }
+
+    [Fact]
+    public void Should_Change_Password_When_Different()
+    {
+        var user = CreateUser();
+
+        _hasher.Setup(x => x.Hash(It.IsAny<string>()))
+                .Returns("new-hash");
+
+        var password = Password.Create("Senha@123").Value!;
+
+        var changed = user.ChangePassword(password, _hasher.Object);
+
+        Assert.True(changed);
+        Assert.Equal("new-hash", user.PasswordHash);
+    }
+
+    [Fact]
+    public void Should_Not_Change_Password_When_Same()
+    {
+        var user = CreateUser();
+
+        _hasher.Setup(x => x.Hash(It.IsAny<string>()))
+               .Returns("same-hash");
+
+        user = new User(
             UserName.Create("john123").Value!,
-            "hash",
+            "same-hash",
             Role.Manager,
             Guid.NewGuid()
         );
 
-        user.UpdateRole(Role.Manager);
+        var password = Password.Create("Senha@123").Value!;
 
-        Assert.Equal(Role.Manager, user.Role);
+        var changed = user.ChangePassword(password, _hasher.Object);
+
+        Assert.False(changed);
+    }
+
+    [Fact]
+    public void Should_Not_Change_Password_When_Null()
+    {
+        var user = CreateUser();
+
+        var changed = user.ChangePassword(null, _hasher.Object);
+
+        Assert.False(changed);
+    }
+
+    private User CreateUser(Role role = Role.Manager)
+    {
+        return new User(
+            UserName.Create("john123").Value!,
+            "old-hash",
+            role,
+            Guid.NewGuid()
+        );
     }
 }

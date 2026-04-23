@@ -40,8 +40,29 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> AnyByUserNameAsync(string userName)
     {
+        var parsed = UserName.Create(userName);
+        if (parsed.IsFailure || parsed.Value is null)
+            return false;
+
+        var match = parsed.Value;
+
         return await _context.Users
-            .AnyAsync(u => u.UserName == UserName.Create(userName).Value && u.IsActive);
+            .AnyAsync(u => u.UserName == match && u.IsActive);
+    }
+
+    public async Task<bool> AnyByUserNameAsync(string userName, Guid ignoreUserId)
+    {
+        var parsed = UserName.Create(userName);
+        if (parsed.IsFailure || parsed.Value is null)
+            return false;
+
+        var match = parsed.Value;
+
+        return await _context.Users
+            .AnyAsync(u =>
+                u.UserName == match &&
+                u.Id != ignoreUserId &&
+                u.IsActive);
     }
 
 }

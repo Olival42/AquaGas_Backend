@@ -1,4 +1,3 @@
-using AquaGas.Api.Modules.Auth.Domain.Enums;
 using AquaGas.Api.Modules.Auth.Domain.Models;
 using AquaGas.Api.Modules.Employee.Domain.ValueObjects;
 using AquaGas.Api.Shared.Domain.ValueObjects;

@@ -38,7 +38,6 @@ public static class DependencyInjection
         services.AddScoped<IGetAllEmployees, GetAllEmployees>();
         services.AddScoped<IDeactiveEmployee, DeactiveEmployee>();
         services.AddScoped<IUpdateEmployee, UpdateEmployee>();
-        services.AddScoped<IResetPassword, ResetPassword>();
         return services;
     }
 
