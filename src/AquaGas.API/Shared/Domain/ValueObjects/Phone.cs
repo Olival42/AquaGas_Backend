@@ -17,7 +17,7 @@ public sealed class Phone
         if (string.IsNullOrWhiteSpace(value))
         {
             return Result<Phone>.Fail(
-                Error.Validation("Phone cannot be empty")
+                Error.Validation("Phone cannot be empty", "Phone")
             );
         }
 
@@ -28,7 +28,7 @@ public sealed class Phone
 
         if (value.Length < 10 || value.Length > 11)
         return Result<Phone>.Fail(
-                Error.Validation("Invalid phone")
+                Error.Validation("Invalid phone", "Phone")
             );
 
         return Result<Phone>.Success(new Phone(value));

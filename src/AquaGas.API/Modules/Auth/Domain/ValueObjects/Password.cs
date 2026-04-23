@@ -21,12 +21,12 @@ public sealed class Password
     {
         if (string.IsNullOrWhiteSpace(plainPassword))
             return Result<Password>.Fail(
-                Error.Validation("Password cannot empty")
+                Error.Validation("Password cannot be empty", "Password")
             );
 
         if (!_regex.IsMatch(plainPassword))
             return Result<Password>.Fail(
-               Error.Validation("Password weak")
+               Error.Validation("Password is too weak. It must have at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character.", "Password")
             );
 
         return Result<Password>.Success(new Password(plainPassword));

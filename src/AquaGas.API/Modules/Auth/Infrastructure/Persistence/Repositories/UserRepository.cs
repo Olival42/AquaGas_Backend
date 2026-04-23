@@ -15,6 +15,11 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
+    public async Task AddAsync(User user)
+    {
+        await _context.Users.AddAsync(user);
+    }
+
     public async Task<User?> GetByUserNameAsync(string userName)
     {
         var parsed = UserName.Create(userName);
@@ -31,6 +36,33 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .FirstOrDefaultAsync(u => u.Id == id && u.IsActive);
+    }
+
+    public async Task<bool> AnyByUserNameAsync(string userName)
+    {
+        var parsed = UserName.Create(userName);
+        if (parsed.IsFailure || parsed.Value is null)
+            return false;
+
+        var match = parsed.Value;
+
+        return await _context.Users
+            .AnyAsync(u => u.UserName == match && u.IsActive);
+    }
+
+    public async Task<bool> AnyByUserNameAsync(string userName, Guid ignoreUserId)
+    {
+        var parsed = UserName.Create(userName);
+        if (parsed.IsFailure || parsed.Value is null)
+            return false;
+
+        var match = parsed.Value;
+
+        return await _context.Users
+            .AnyAsync(u =>
+                u.UserName == match &&
+                u.Id != ignoreUserId &&
+                u.IsActive);
     }
 
 }

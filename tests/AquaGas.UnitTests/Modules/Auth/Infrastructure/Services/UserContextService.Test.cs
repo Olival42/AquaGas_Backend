@@ -1,65 +1,89 @@
 using Xunit;
-using Moq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using AquaGas.Api.Modules.Auth.Infrastructure.Services;
 
 public class UserContextServiceTests
 {
     [Fact]
     public void Should_Return_UserId_From_Claims()
     {
-        var userId = "123";
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, userId)
-        };
-
-        var identity = new ClaimsIdentity(claims);
-        var principal = new ClaimsPrincipal(identity);
+        var userId = Guid.NewGuid();
 
         var httpContext = new DefaultHttpContext
         {
-            User = principal
+            User = new ClaimsPrincipal(
+                new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString())
+                })
+            )
         };
 
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+        var accessor = new HttpContextAccessor
+        {
+            HttpContext = httpContext
+        };
 
-        var service = new UserContextService(accessorMock.Object);
+        var service = new UserContextService(accessor);
 
         var result = service.GetUserId();
 
-        Assert.Equal(userId, result);
+        Assert.True(result.IsSuccess);
+        Assert.Equal(userId, result.Value);
     }
 
     [Fact]
-    public void Should_Return_Null_When_No_HttpContext()
+    public void Should_Fail_When_No_HttpContext()
     {
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        accessorMock.Setup(x => x.HttpContext).Returns((HttpContext?)null);
-
-        var service = new UserContextService(accessorMock.Object);
+        var service = new UserContextService(new HttpContextAccessor
+        {
+            HttpContext = null
+        });
 
         var result = service.GetUserId();
 
-        Assert.Null(result);
+        Assert.True(result.IsFailure);
+        Assert.Equal("Missing UserId in token", result.Errors[0].Message);
     }
 
     [Fact]
-    public void Should_Return_Null_When_No_Claim()
+    public void Should_Fail_When_No_Claim()
     {
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+        var httpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(new ClaimsIdentity())
+        };
 
-        var accessorMock = new Mock<IHttpContextAccessor>();
-        accessorMock.Setup(x => x.HttpContext).Returns(httpContext);
-
-        var service = new UserContextService(accessorMock.Object);
+        var service = new UserContextService(new HttpContextAccessor
+        {
+            HttpContext = httpContext
+        });
 
         var result = service.GetUserId();
 
-        Assert.Null(result);
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void Should_Fail_When_Invalid_Guid()
+    {
+        var httpContext = new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(
+                new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "invalid-guid")
+                })
+            )
+        };
+
+        var service = new UserContextService(new HttpContextAccessor
+        {
+            HttpContext = httpContext
+        });
+
+        var result = service.GetUserId();
+
+        Assert.True(result.IsFailure);
     }
 }

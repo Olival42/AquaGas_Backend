@@ -4,9 +4,7 @@ using AquaGas.Api.Modules.Auth.Application.Validators;
 using AquaGas.Api.Modules.Auth.Domain.Repositories;
 using AquaGas.Api.Modules.Auth.Infrastructure.Repositories;
 using AquaGas.Api.Modules.Auth.Infrastructure.Security.Services;
-using AquaGas.Api.Modules.Auth.Infrastructure.Services;
 using AquaGas.Api.Shared.Infrastructure.Cache;
-using AquaGas.Api.Shared.Http;
 using AquaGas.Api.Shared.Infrastructure.TokenBlacklist;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -14,6 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 using AquaGas.API.Shared.Application.Repositories;
 using AquaGas.API.Shared.Application.Services;
 using AquaGas.Api.Shared.Infrastructure.Persistence.Repositories;
+using AquaGas.Api.Modules.Employee.Application.UseCases;
+using AquaGas.Api.Modules.Employee.Domain.Repositories;
+using AquaGas.API.Modules.Employee.Infrastructure.Persistence.Repositories;
+using AquaGas.Api.Modules.Employee.Application.Validators;
+using AquaGas.Api.Shared.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace AquaGas.Api.Shared.Infrastructure.DependencyInjection;
 
@@ -29,14 +33,23 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IAuditLogService, AuditLogService>();
+        services.AddScoped<IRegisterEmployee, RegisterEmployee>();
+        services.AddScoped<IGetByIdEmployee, GetByIdEmployee>();
+        services.AddScoped<IGetAllEmployees, GetAllEmployees>();
+        services.AddScoped<IDeactiveEmployee, DeactiveEmployee>();
+        services.AddScoped<IUpdateEmployee, UpdateEmployee>();
         return services;
     }
 
-    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration config)
     {
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(config.GetConnectionString("DefaultConnection")));
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         return services;
     }
 
@@ -58,17 +71,7 @@ public static class DependencyInjection
     {
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<LoginInputValidator>();
-        return services;
-    }
-
-    public static IServiceCollection AddStandardApiBehavior(this IServiceCollection services)
-    {
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.InvalidModelStateResponseFactory = context =>
-                ErrorResponseHelper.BadRequestFromModelState(context.ModelState);
-        });
-
+        services.AddValidatorsFromAssemblyContaining<RegisterEmployeeValidator>();
         return services;
     }
 }

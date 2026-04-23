@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/AquaGas.API/AquaGas.API.csproj" />
   </Folder>
+  <Folder Name="/src/AquaGas.Api/" />
   <Folder Name="/tests/">
     <Project Path="tests/AquaGas.UnitTests/AquaGas.UnitTests.csproj" />
   </Folder>

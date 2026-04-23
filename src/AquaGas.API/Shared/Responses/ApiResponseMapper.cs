@@ -1,4 +1,5 @@
 using AquaGas.Api.Shared.Results;
+using AquaGas.Api.Shared.Errors;
 
 namespace AquaGas.Api.Shared.Responses;
 
@@ -11,22 +12,33 @@ public static class ApiResponseMapper
 
         var errors = result.Errors ?? new();
 
-        var validationErrors = errors
+        var grouped = errors
             .Where(e => e.Code == "VALIDATION_ERROR")
-            .Select(e => e.Message)
+            .GroupBy(e => e.Field ?? "General")
+            .Select(g => new DataErrors(
+                g.Key,
+                g.Select(e => e.Message).ToList()
+            ))
             .ToList();
 
-        var error = validationErrors.Any()
-            ? new ErrorResponse(
-                "VALIDATION_ERROR",
-                "Validation failed",
-                validationErrors
-              )
-            : new ErrorResponse(
-                errors.FirstOrDefault()?.Code ?? "UNKNOWN",
-                errors.FirstOrDefault()?.Message ?? "Unknown error"
+        if (grouped.Any())
+        {
+            return ApiResponse<T>.Fail(
+                new ErrorResponse(
+                    "VALIDATION_ERROR",
+                    "Validation failed",
+                    grouped
+                )
             );
+        }
 
-        return ApiResponse<T>.Fail(error);
+        var first = errors.FirstOrDefault();
+
+        return ApiResponse<T>.Fail(
+            new ErrorResponse(
+                first?.Code ?? "UNKNOWN",
+                first?.Message ?? "Unknown error"
+            )
+        );
     }
 }

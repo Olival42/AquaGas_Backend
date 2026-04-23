@@ -28,7 +28,7 @@ public class RefreshUseCaseTests
         => new(
             UserName.Create("john123").Value!,
             "hash",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 

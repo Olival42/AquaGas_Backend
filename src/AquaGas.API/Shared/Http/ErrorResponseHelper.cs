@@ -2,7 +2,6 @@ namespace AquaGas.Api.Shared.Http;
 
 using AquaGas.Api.Shared.Errors;
 using AquaGas.Api.Shared.Responses;
-using AquaGas.Api.Shared.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -18,10 +17,14 @@ public static class ErrorResponseHelper
             ))
             .ToList();
 
-        var response = new ApiResponse<List<DataErrors>>(
+        var response = new ApiResponse<object?>(
             Success: false,
-            Data: errors,
-            Error: null,
+            Data: null,
+            Error: new ErrorResponse(
+                "VALIDATION_ERROR",
+                "Validation failed",
+                errors
+            ),
             Timestamp: DateTimeOffset.UtcNow
         );
 
@@ -35,6 +38,7 @@ public static class ErrorResponseHelper
             "VALIDATION_ERROR" => new BadRequestObjectResult(response),
             "UNAUTHORIZED" => new UnauthorizedObjectResult(response),
             "NOT_FOUND" => new NotFoundObjectResult(response),
+            "CONFLICT" => new ConflictObjectResult(response),
             _ => new ObjectResult(response) { StatusCode = 500 }
         };
     }

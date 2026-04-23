@@ -34,4 +34,26 @@ public class Employee
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
     }
+
+    public void Deactive()
+    {
+        IsActive = false;
+        User?.Deactive();
+    }
+
+    public void Update(
+    EmployeeName? name,
+    Email? email,
+    Phone? phone)
+    {
+        if (name is not null)
+            Name = name;
+
+        if (email is not null)
+            Email = email;
+
+        if (phone is not null)
+            Phone = phone;
+    }
+
 }

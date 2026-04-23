@@ -11,4 +11,6 @@ public interface IRefreshTokenRepository
     Task SaveChangesAsync();
     
     Task UpdateAsync(RefreshToken refreshToken);
+
+    Task RevokeAllByUserId(Guid userId);
 }

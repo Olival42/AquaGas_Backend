@@ -1,3 +1,6 @@
+using AquaGas.Api.Shared.Errors;
+using AquaGas.Api.Shared.Results;
+
 namespace AquaGas.Api.Modules.Employee.Domain.ValueObjects;
 
 public sealed class EmployeeName
@@ -9,12 +12,14 @@ public sealed class EmployeeName
         Value = value;
     }
 
-    public static EmployeeName Create(string name)
+    public static Result<EmployeeName> Create(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name cannot be empty");
+            return Result<EmployeeName>.Fail(
+                            Error.Validation("Name cannot be empty", "Name")
+                        );
 
-        return new EmployeeName(name.Trim());
+        return Result<EmployeeName>.Success(new EmployeeName(name.Trim()));
     }
 
     public override string ToString() => Value;

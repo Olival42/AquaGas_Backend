@@ -18,7 +18,7 @@ public class AuthServiceTests
         => new(
             UserName.Create("john").Value!,
             "hashed-password",
-            Role.MANAGER,
+            Role.Manager,
             Guid.NewGuid()
         );
 
