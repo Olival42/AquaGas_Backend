@@ -18,6 +18,9 @@ using AquaGas.API.Modules.Employee.Infrastructure.Persistence.Repositories;
 using AquaGas.Api.Modules.Employee.Application.Validators;
 using AquaGas.Api.Shared.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using AquaGas.Api.Modules.Customer.Domain.Repositories;
+using AquaGas.API.Modules.Customer.Infrastructure.Persistence.Repositories;
+using AquaGas.Api.Modules.Customer.Application.UseCases;
 
 namespace AquaGas.Api.Shared.Infrastructure.DependencyInjection;
 
@@ -38,6 +41,11 @@ public static class DependencyInjection
         services.AddScoped<IGetAllEmployees, GetAllEmployees>();
         services.AddScoped<IDeactiveEmployee, DeactiveEmployee>();
         services.AddScoped<IUpdateEmployee, UpdateEmployee>();
+        services.AddScoped<IRegisterCustomer, RegisterCustomer>();
+        services.AddScoped<IGetByCustomerId, GetByCustomerId>();
+        services.AddScoped<IGetAllCustomers, GetAllCustomers>();
+        services.AddScoped<IDeactiveCustomer, DeactiveCustomer>();
+        services.AddScoped<IUpdateCustomer, UpdateCustomer>();
         return services;
     }
 
@@ -50,6 +58,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
         return services;
     }
 

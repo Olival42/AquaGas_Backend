@@ -8,5 +8,6 @@ public enum AuditAction
     LOGIN,
     LOGOUT,
     REFRESH_TOKEN,
-    ACCESS_DENIED
+    ACCESS_DENIED,
+    DEACTIVATE
 }
