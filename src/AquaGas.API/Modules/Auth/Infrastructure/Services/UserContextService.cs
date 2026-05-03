@@ -30,4 +30,18 @@ public class UserContextService : IUserContextService
 
         return Result<Guid>.Success(userId);
     }
+
+    public Result<string> GetUserName()
+    {
+        var userName = _httpContextAccessor.HttpContext?
+            .User
+            .FindFirst(ClaimTypes.Name)?.Value;
+
+        if (string.IsNullOrWhiteSpace(userName))
+            return Result<string>.Fail(
+                Error.Unauthorized("Missing UserName in token")
+            );
+
+        return Result<string>.Success(userName);
+    }
 }
