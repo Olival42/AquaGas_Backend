@@ -43,14 +43,14 @@ public class UpdateEmployeeTests
     {
         var employee = new Employee(
             EmployeeName.Create("João").Value!,
-            Cpf.Create("12345678909").Value!,
+            Cpf.Create("79522375004").Value!,
             Email.Create("joao@email.com").Value!,
             Phone.Create("44999999999").Value!
         );
 
         var user = new User(
             UserName.Create("joao").Value!,
-            "Pasword@123",
+            "hash",
             role,
             employee.Id
         );
@@ -78,7 +78,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         var result = await _useCase.Execute(input, employee.Id);
 
@@ -111,11 +114,15 @@ public class UpdateEmployeeTests
         _repository.Setup(x => x.GetByIdAsync(employee.Id))
             .ReturnsAsync(employee);
 
-        _userRepository.Setup(x => x.AnyByUserNameAsync(input.UserName!, employee.User!.Id))
-            .ReturnsAsync(true);
+        _userRepository.Setup(x =>
+            x.AnyByUserNameAsync(input.UserName!, employee.User!.Id)
+        ).ReturnsAsync(true);
 
         _userContext.Setup(x => x.GetUserId())
             .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         var result = await _useCase.Execute(input, employee.Id);
 
@@ -140,7 +147,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(false);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(input, employee.Id);
 
@@ -167,7 +177,10 @@ public class UpdateEmployeeTests
             .Returns("new_hash");
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(input, employee.Id);
 
@@ -186,13 +199,16 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(new UpdateEmployeeInput(), employee.Id);
 
         _audit.Verify(x => x.LogAsync(
             It.IsAny<Guid>(),
-            null,
+            "admin",
             AuditAction.UPDATE,
             It.IsAny<string>(),
             employee.Id,
@@ -210,7 +226,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(new UpdateEmployeeInput(), employee.Id);
 
@@ -230,6 +249,9 @@ public class UpdateEmployeeTests
 
         _userContext.Setup(x => x.GetUserId())
             .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(input, employee.Id);
 
@@ -269,7 +291,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         var result = await _useCase.Execute(input, employee.Id);
 
@@ -290,7 +315,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(input, employee.Id);
 
@@ -311,7 +339,10 @@ public class UpdateEmployeeTests
             .ReturnsAsync(employee);
 
         _userContext.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+    .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("admin"));
 
         await _useCase.Execute(input, employee.Id);
 

@@ -18,6 +18,16 @@ public class EmployeeTests
         );
     }
 
+    private User CreateUser(Employee employee)
+    {
+        return new User(
+            UserName.Create("joao").Value!,
+            "hash",
+            Role.Employee,
+            employee.Id
+        );
+    }
+
     [Fact]
     public void Should_Create_Employee_As_Active()
     {
@@ -41,17 +51,9 @@ public class EmployeeTests
     public void Should_Deactivate_User_When_Deactivating_Employee()
     {
         var employee = CreateEmployee();
+        var user = CreateUser(employee);
 
-        var user = new User(
-            UserName.Create("joao").Value!,
-            "hash",
-            Role.Employee,
-            employee.Id
-        );
-
-        typeof(Employee)
-            .GetProperty(nameof(Employee.User))!
-            .SetValue(employee, user);
+        employee.AssignUser(user);
 
         employee.Deactive();
 

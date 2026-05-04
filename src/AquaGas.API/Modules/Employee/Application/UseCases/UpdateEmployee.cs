@@ -50,17 +50,24 @@ public class UpdateEmployee : IUpdateEmployee
             return Result<EmployeeWithUserResponse>.Fail(validation.Errors.ToArray());
 
         var currentUser = _userContextService.GetUserId();
-
         if (currentUser.IsFailure)
             return Result<EmployeeWithUserResponse>.Fail(currentUser.Errors.ToArray());
 
+        var userNameCtx = _userContextService.GetUserName();
+        if (userNameCtx.IsFailure)
+            return Result<EmployeeWithUserResponse>.Fail(userNameCtx.Errors.ToArray());
+
         var v = validation.Value!;
+
+        if (employee.User is null)
+            return Result<EmployeeWithUserResponse>.Fail(
+                Error.Validation("Employee has no associated user"));
 
         if (v.UserName is not null)
         {
             var exists = await _userRepository.AnyByUserNameAsync(
                 v.UserName.Value,
-                employee.User!.Id
+                employee.User.Id
             );
 
             if (exists)
@@ -68,21 +75,36 @@ public class UpdateEmployee : IUpdateEmployee
                     Error.Conflict("User name already registered"));
         }
 
+        if (v.Email is not null)
+        {
+            var emailExists = await _employeeRepository.AnyByEmailAsync(
+                v.Email.Value,
+                employee.Id
+            );
+
+            if (emailExists)
+                return Result<EmployeeWithUserResponse>.Fail(
+                    Error.Conflict("Email already registered"));
+        }
+
         var oldValues = new
         {
-            employee.Name,
-            employee.Email,
-            employee.Phone,
-            employee.User!.UserName,
-            PasswordChanged = false,
-            employee.User.Role
+            Name = employee.Name.Value,
+            Email = employee.Email.Value,
+            Phone = employee.Phone.Value,
+            UserName = employee.User.UserName.Value,
+            Role = employee.User.Role
         };
 
         employee.Update(v.Name, v.Email, v.Phone);
 
-        var usernameChanged = employee.User.ChangeUserName(v.UserName);
+        var usernameChanged = v.UserName is not null &&
+                              employee.User.ChangeUserName(v.UserName);
+
         var roleChanged = employee.User.ChangeRole(v.Role);
-        var passwordChanged = employee.User.ChangePassword(v.Password, _passwordHasher);
+
+        var passwordChanged = v.Password is not null &&
+                              employee.User.ChangePassword(v.Password, _passwordHasher);
 
         if (usernameChanged || roleChanged || passwordChanged)
             await _refreshTokenRepository.RevokeAllByUserId(employee.User.Id);
@@ -92,19 +114,19 @@ public class UpdateEmployee : IUpdateEmployee
 
         await _auditLogService.LogAsync(
             userId: currentUser.Value,
-            userName: null,
+            userName: userNameCtx.Value,
             action: AuditAction.UPDATE,
             entityType: "Employee",
             entityId: employee.Id,
             oldValues: oldValues,
             newValues: new
             {
-                employee.Name,
-                employee.Email,
-                employee.Phone,
-                employee.User.UserName,
-                PasswordChanged = passwordChanged,
-                employee.User.Role
+                Name = employee.Name.Value,
+                Email = employee.Email.Value,
+                Phone = employee.Phone.Value,
+                UserName = employee.User.UserName.Value,
+                Role = employee.User.Role,
+                PasswordChanged = passwordChanged
             }
         );
 

@@ -19,20 +19,10 @@ public class GetAllEmployees : IGetAllEmployees
     {
         var employees = await _employeeRepository.GetAllAsync();
 
-        var response = employees.Select(e =>
+        var response = (employees ?? []).Select(e =>
             new EmployeeWithUserResponse(
-                new UserResponse(
-                    e.User!.Id,
-                    e.User.UserName.Value,
-                    e.User.Role
-                ),
-                new EmployeeResponse(
-                    e.Id,
-                    e.Name.Value,
-                    e.CPF.Value,
-                    e.Email.Value,
-                    e.Phone.Value
-                )
+                e.User.Adapt<UserResponse>()!,
+                e.Adapt<EmployeeResponse>()
             )
         ).ToList();
 

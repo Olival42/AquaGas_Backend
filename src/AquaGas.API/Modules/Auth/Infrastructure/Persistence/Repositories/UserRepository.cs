@@ -47,7 +47,7 @@ public class UserRepository : IUserRepository
         var match = parsed.Value;
 
         return await _context.Users
-            .AnyAsync(u => u.UserName == match && u.IsActive);
+            .AnyAsync(u => u.UserName == match);
     }
 
     public async Task<bool> AnyByUserNameAsync(string userName, Guid ignoreUserId)
@@ -61,8 +61,7 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .AnyAsync(u =>
                 u.UserName == match &&
-                u.Id != ignoreUserId &&
-                u.IsActive);
+                u.Id != ignoreUserId);
     }
 
 }

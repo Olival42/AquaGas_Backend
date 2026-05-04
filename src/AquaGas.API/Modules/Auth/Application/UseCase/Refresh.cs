@@ -1,5 +1,6 @@
 using AquaGas.Api.Modules.Auth.Application.Dtos.Responses;
 using AquaGas.Api.Modules.Auth.Application.Services;
+using AquaGas.Api.Modules.Auth.Domain.Repositories;
 using AquaGas.Api.Shared.Errors;
 using AquaGas.Api.Shared.Results;
 using AquaGas.API.Shared.Application.Services;
@@ -11,18 +12,18 @@ public class Refresh : IRefresh
 {
     private readonly IJwtService _jwtService;
     private readonly IRefreshTokenService _refreshTokenService;
-    private readonly IUserService _userService;
+    private readonly IUserRepository _userRepository;
     private readonly IAuditLogService _audit;
 
     public Refresh(
             IJwtService jwtService,
             IRefreshTokenService refreshTokenService,
-            IUserService userService,
+            IUserRepository userRepository,
             IAuditLogService audit
         )
     {
         _jwtService = jwtService;
-        _userService = userService;
+        _userRepository = userRepository;
         _refreshTokenService = refreshTokenService;
         _audit = audit;
     }
@@ -49,7 +50,7 @@ public class Refresh : IRefresh
                 Error.Unauthorized("Refresh token expired"));
         }
 
-        var user = await _userService.GetById(refreshTokenEntity.UserId);
+        var user = await _userRepository.GetByIdAsync(refreshTokenEntity.UserId);
 
         if (user == null)
         {
