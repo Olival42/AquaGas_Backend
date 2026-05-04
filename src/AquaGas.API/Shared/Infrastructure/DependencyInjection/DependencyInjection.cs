@@ -33,7 +33,6 @@ public static class DependencyInjection
         services.AddScoped<IRefresh, Refresh>();
         services.AddScoped<IPasswordHasher, Argon2PasswordHasher>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IAuditLogService, AuditLogService>();
         services.AddScoped<IRegisterEmployee, RegisterEmployee>();

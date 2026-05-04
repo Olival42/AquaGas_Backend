@@ -30,14 +30,20 @@ public class DeactiveEmployee : IDeactiveEmployee
 
     public async Task<Result<object>> Execute(Guid id)
     {
-        var currentUserId = _userContextService.GetUserId();
+        var currentUser = _userContextService.GetUserId();
+        if (currentUser.IsFailure)
+            return Result<object>.Fail(currentUser.Errors.ToArray());
+
+        var userNameCtx = _userContextService.GetUserName();
+        if (userNameCtx.IsFailure)
+            return Result<object>.Fail(userNameCtx.Errors.ToArray());
 
         var employee = await _employeeRepository.GetByIdAsync(id);
 
         if (employee is null)
             return Result<object>.Fail(Error.NotFound("Employee not found"));
 
-        if (employee.User!.Id == currentUserId.Value)
+        if (employee.User is not null && employee.User.Id == currentUser.Value)
             return Result<object>.Fail(
                 Error.Conflict("You cannot deactivate your own account")
             );
@@ -48,19 +54,22 @@ public class DeactiveEmployee : IDeactiveEmployee
             employee.Name,
             employee.Email,
             employee.IsActive,
-            employee.User.Role
+            employee.User?.Role
         };
 
         employee.Deactive();
 
         _employeeRepository.Update(employee);
-        await _refreshTokenRepository.RevokeAllByUserId(employee.User.Id);
+
+        if (employee.User is not null)
+            await _refreshTokenRepository.RevokeAllByUserId(employee.User.Id);
+            
         await _employeeRepository.SaveChangesAsync();
 
         await _auditLogService.LogAsync(
-            userId: currentUserId.Value,
-            userName: null,
-            action: AuditAction.DELETE,
+            userId: currentUser.Value,
+            userName: userNameCtx.Value,
+            action: AuditAction.DEACTIVATE,
             entityType: "Employee",
             entityId: employee.Id,
             oldValues: oldValues,

@@ -41,7 +41,7 @@ public class UserTests
         var user = CreateUser();
 
         user.Deactive();
-        user.Active();
+        user.Reactive();
 
         Assert.True(user.IsActive);
     }

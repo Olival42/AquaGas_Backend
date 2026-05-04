@@ -34,7 +34,7 @@ public class User
 
     public void Deactive() => IsActive = false;
 
-    public void Active() => IsActive = true;
+    public void Reactive() => IsActive = true;
 
     public bool ChangeUserName(UserName? newUserName)
     {

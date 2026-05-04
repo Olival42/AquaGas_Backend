@@ -8,12 +8,13 @@ using AquaGas.Api.Modules.Auth.Domain.ValueObjects;
 using AquaGas.API.Shared.Domain.Enums;
 using AquaGas.Api.Modules.Auth.Application.Dtos.Responses;
 using AquaGas.API.Shared.Application.Services;
+using AquaGas.Api.Modules.Auth.Domain.Repositories;
 
 public class RefreshUseCaseTests
 {
     private readonly Mock<IJwtService> _jwtMock = new();
     private readonly Mock<IRefreshTokenService> _refreshMock = new();
-    private readonly Mock<IUserService> _userMock = new();
+    private readonly Mock<IUserRepository> _userMock = new();
     private readonly Mock<IAuditLogService> _auditMock = new();
 
     private Refresh CreateUseCase()
@@ -37,7 +38,7 @@ public class RefreshUseCaseTests
         _refreshMock.Setup(x => x.GetAsync(It.IsAny<string>()))
             .ReturnsAsync(new RefreshToken(user.Id, "hash", DateTime.UtcNow.AddDays(1)));
 
-        _userMock.Setup(x => x.GetById(user.Id))
+        _userMock.Setup(x => x.GetByIdAsync(user.Id))
             .ReturnsAsync(user);
 
         _jwtMock.Setup(x => x.GenerateAccessToken(user))
@@ -93,7 +94,7 @@ public class RefreshUseCaseTests
         _refreshMock.Setup(x => x.GetAsync(It.IsAny<string>()))
             .ReturnsAsync(token);
 
-        _userMock.Setup(x => x.GetById(It.IsAny<Guid>()))
+        _userMock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((User?)null);
 
         var result = await CreateUseCase().Execute("token");

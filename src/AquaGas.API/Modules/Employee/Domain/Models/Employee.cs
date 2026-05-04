@@ -35,10 +35,20 @@ public class Employee
         CreatedAt = DateTime.UtcNow;
     }
 
+    public void AssignUser(User user)
+    {
+        User = user;
+    }
+
     public void Deactive()
     {
         IsActive = false;
         User?.Deactive();
+    }
+
+    public void Reactivate()
+    {
+        IsActive = true;
     }
 
     public void Update(
