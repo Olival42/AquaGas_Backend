@@ -8,7 +8,6 @@ using AquaGas.Api.Shared.Infrastructure.Cache;
 using AquaGas.Api.Shared.Infrastructure.TokenBlacklist;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
 using AquaGas.API.Shared.Application.Repositories;
 using AquaGas.API.Shared.Application.Services;
 using AquaGas.Api.Shared.Infrastructure.Persistence.Repositories;
@@ -21,6 +20,11 @@ using Microsoft.EntityFrameworkCore;
 using AquaGas.Api.Modules.Customer.Domain.Repositories;
 using AquaGas.API.Modules.Customer.Infrastructure.Persistence.Repositories;
 using AquaGas.Api.Modules.Customer.Application.UseCases;
+using AquaGas.Api.Modules.Product.Domain.Repositories;
+using AquaGas.API.Modules.Product.Infrastructure.Persistence.Repositories;
+using AquaGas.Api.Modules.Product.Application.UseCases;
+using AquaGas.API.Modules.Product.Application.Repositories;
+using AquaGas.Api.Modules.Product.Infrastructure.Persistence.Repositories;
 
 namespace AquaGas.Api.Shared.Infrastructure.DependencyInjection;
 
@@ -45,6 +49,12 @@ public static class DependencyInjection
         services.AddScoped<IGetAllCustomers, GetAllCustomers>();
         services.AddScoped<IDeactiveCustomer, DeactiveCustomer>();
         services.AddScoped<IUpdateCustomer, UpdateCustomer>();
+        services.AddScoped<IRegisterProduct, RegisterProduct>();
+        services.AddScoped<IGetByProductId, GetByProductId>();
+        services.AddScoped<IGetAllProducts, GetAllProducts>();
+        services.AddScoped<IDeactiveProduct, DeactiveProduct>();
+        services.AddScoped<IUpdateProduct, UpdateProduct>();
+        services.AddScoped<IUpdateStock, UpdateStock>();
         return services;
     }
 
@@ -58,6 +68,8 @@ public static class DependencyInjection
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IStockMovementRepository, StockMovementRepository>();
         return services;
     }
 
