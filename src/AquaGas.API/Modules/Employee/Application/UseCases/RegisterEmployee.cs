@@ -84,6 +84,8 @@ public class RegisterEmployee : IRegisterEmployee
 
         employee.AssignUser(user);
         await _employeeRepository.AddAsync(employee);
+        await _userRepository.AddAsync(user);
+
         await _employeeRepository.SaveChangesAsync();
 
         await LogAudit(currentUserId, v, AuditAction.CREATE, employee, null);
@@ -127,6 +129,7 @@ public class RegisterEmployee : IRegisterEmployee
             );
 
             employee.AssignUser(user);
+            await _userRepository.AddAsync(user);
         }
         else
         {
@@ -136,7 +139,6 @@ public class RegisterEmployee : IRegisterEmployee
             employee.User.ChangePassword(v.Password, _passwordHasher);
         }
 
-        _employeeRepository.Update(employee);
         await _employeeRepository.SaveChangesAsync();
 
         await LogAudit(currentUserId, v, AuditAction.UPDATE, employee, oldSnapshot);

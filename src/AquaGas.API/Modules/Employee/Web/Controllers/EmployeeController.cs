@@ -33,7 +33,7 @@ public class EmployeeController : ControllerBase
         _updateEmployee = updateEmployee;
     }
 
-    [Authorize]
+    [Authorize(Roles = "Manager")]
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterEmployeeInput input)
     {
