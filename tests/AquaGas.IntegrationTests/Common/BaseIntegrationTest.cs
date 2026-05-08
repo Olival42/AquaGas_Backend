@@ -33,14 +33,25 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         await action(dbContext);
     }
 
-    protected HttpClient CreateAuthenticatedClient(string role = "Manager")
+    protected HttpClient CreateAuthenticatedClient(
+    string role = "Manager",
+    Guid? userId = null,
+    string? userName = null)
     {
         var client = CreateClient();
-        var token = AuthTokenHelper.CreateAccessToken(_fixture.Factory.Configuration, role);
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var token = AuthTokenHelper.CreateAccessToken(
+            _fixture.Factory.Configuration,
+            role,
+            userName,
+            userId);
+
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
         return client;
     }
-    
+
     protected async Task<(Guid UserId, string UserName)> SeedUserAsync(string userName = "testuser", string role = "Manager")
     {
         using var scope = _fixture.Factory.Services.CreateScope();
