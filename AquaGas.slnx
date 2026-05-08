@@ -4,6 +4,7 @@
   </Folder>
   <Folder Name="/src/AquaGas.Api/" />
   <Folder Name="/tests/">
+    <Project Path="tests/AquaGas.IntegrationTests/AquaGas.IntegrationTests.csproj" />
     <Project Path="tests/AquaGas.UnitTests/AquaGas.UnitTests.csproj" />
   </Folder>
 </Solution>

@@ -3,6 +3,7 @@ using AquaGas.Api.Modules.Auth.Domain.Models;
 using AquaGas.Api.Modules.Employee.Domain.Models;
 using AquaGas.API.Shared.Domain.Models;
 using AquaGas.Api.Modules.Customer.Domain.Models;
+using AquaGas.Api.Modules.Product.Domain.Models;
 
 namespace AquaGas.Api.Shared.Infrastructure.Persistence;
 
@@ -17,6 +18,9 @@ public class AppDbContext : DbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
