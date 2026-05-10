@@ -1,10 +1,53 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/AquaGas.API/AquaGas.API.csproj" />
+    <Project Path="src/Shared/Shared.csproj" />
   </Folder>
-  <Folder Name="/src/AquaGas.Api/" />
-  <Folder Name="/tests/">
+  <Folder Name="/src/Auth/">
+    <Project Path="src/Auth/AquaGas.Auth.Application/AquaGas.Auth.Application.csproj" />
+    <Project Path="src/Auth/AquaGas.Auth.Domain/AquaGas.Auth.Domain.csproj" />
+    <Project Path="src/Auth/AquaGas.Auth.Infrastructure/AquaGas.Auth.Infrastructure.csproj" />
+    <Project Path="src/Auth/AquaGas.Auth.Web/AquaGas.Auth.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/Customer/">
+    <Project Path="src/Customer/AquaGas.Customer.Application/AquaGas.Customer.Application.csproj" />
+    <Project Path="src/Customer/AquaGas.Customer.Domain/AquaGas.Customer.Domain.csproj" />
+    <Project Path="src/Customer/AquaGas.Customer.Infrastructure/AquaGas.Customer.Infrastructure.csproj" />
+    <Project Path="src/Customer/AquaGas.Customer.Web/AquaGas.Customer.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/Employee/">
+    <Project Path="src/Employee/AquaGas.Employee.Application/AquaGas.Employee.Application.csproj" />
+    <Project Path="src/Employee/AquaGas.Employee.Domain/AquaGas.Employee.Domain.csproj" />
+    <Project Path="src/Employee/AquaGas.Employee.Infrastructure/AquaGas.Employee.Infrastructure.csproj" />
+    <Project Path="src/Employee/AquaGas.Employee.Web/AquaGas.Employee.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/Product/">
+    <Project Path="src/Product/AquaGas.Product.Application/AquaGas.Product.Application.csproj" />
+    <Project Path="src/Product/AquaGas.Product.Domain/AquaGas.Product.Domain.csproj" />
+    <Project Path="src/Product/AquaGas.Product.Infrastructure/AquaGas.Product.Infrastructure.csproj" />
+    <Project Path="src/Product/AquaGas.Product.Web/AquaGas.Product.Web.csproj" />
+  </Folder>
+ <!--  <Folder Name="/tests/">
     <Project Path="tests/AquaGas.IntegrationTests/AquaGas.IntegrationTests.csproj" />
-    <Project Path="tests/AquaGas.UnitTests/AquaGas.UnitTests.csproj" />
+  </Folder> -->
+  <Folder Name="/tests/Auth/">
+    <Project Path="tests/Auth/AquaGas.Auth.Application.Tests/AquaGas.Auth.Application.Tests.csproj" />
+    <Project Path="tests/Auth/AquaGas.Auth.Domain.Tests/AquaGas.Auth.Domain.Tests.csproj" />
+    <Project Path="tests/Auth/AquaGas.Auth.Infrastructure.Tests/AquaGas.Auth.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Customer/">
+    <Project Path="tests/Customer/AquaGas.Customer.Application.Tests/AquaGas.Customer.Application.Tests.csproj" />
+    <Project Path="tests/Customer/AquaGas.Customer.Domain.Tests/AquaGas.Customer.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Employee/">
+    <Project Path="tests/Employee/AquaGas.Employee.Application.Tests/AquaGas.Employee.Application.Tests.csproj" />
+    <Project Path="tests/Employee/AquaGas.Employee.Domain.Tests/AquaGas.Employee.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Product/">
+    <Project Path="tests/Product/AquaGas.Product.Application.Tests/AquaGas.Product.Application.Tests.csproj" />
+    <Project Path="tests/Product/AquaGas.Product.Domain.Tests/AquaGas.Product.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Shared/">
+    <Project Path="tests/Shared/AquaGas.Shared.Tests/AquaGas.Shared.Tests.csproj" />
   </Folder>
 </Solution>
