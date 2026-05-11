@@ -1,8 +1,10 @@
 using AquaGas.Customer.Application.UseCases;
-
+using AquaGas.Customer.Application.Validators;
 using AquaGas.Customer.Domain.Repositories;
 using AquaGas.Customer.Infrastructure.Persistence;
 using AquaGas.Customer.Infrastructure.Persistence.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AquaGas.Customer.Web.DependencyInjection;
@@ -24,6 +26,9 @@ public static class CustomerDependencyInjection
         services.AddScoped<IGetAllCustomers, GetAllCustomers>();
         services.AddScoped<IUpdateCustomer, UpdateCustomer>();
         services.AddScoped<IDeactiveCustomer, DeactiveCustomer>();
+
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<RegisterCustomerValidator>();
 
         return services;
     }

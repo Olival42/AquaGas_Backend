@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using AquaGas.Auth.Infrastructure.Repositories;
 using AquaGas.Auth.Application.UseCase;
 using AquaGas.Auth.Infrastructure.Services;
+using AquaGas.Auth.Application.Validators;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace AquaGas.Auth.Web.DependencyInjection;
 
@@ -42,6 +45,9 @@ public static class AuthDependencyInjection
 
         services.AddScoped<IRedisService, RedisService>();
         services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
+
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<LoginInputValidator>();
 
         return services;
     }

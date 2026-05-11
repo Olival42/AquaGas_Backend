@@ -1,9 +1,11 @@
 using AquaGas.Employee.Application.UseCases;
-
+using AquaGas.Employee.Application.Validators;
 using AquaGas.Employee.Domain.Repositories;
 
 using AquaGas.Employee.Infrastructure.Persistence;
 using AquaGas.Employee.Infrastructure.Persistence.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AquaGas.Employee.Web.DependencyInjection;
@@ -25,6 +27,9 @@ public static class EmployeeDependencyInjection
         services.AddScoped<IGetAllEmployees, GetAllEmployees>();
         services.AddScoped<IUpdateEmployee, UpdateEmployee>();
         services.AddScoped<IDeactiveEmployee, DeactiveEmployee>();
+
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<RegisterEmployeeValidator>();
 
         return services;
     }

@@ -7,6 +7,9 @@ using AquaGas.Product.Domain.Repositories;
 using AquaGas.Product.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using AquaGas.Product.Application.Validators;
 
 namespace AquaGas.Product.Web.DependencyInjection;
 
@@ -29,6 +32,10 @@ public static class DependencyInjection
         services.AddScoped<IUpdateProduct, UpdateProduct>();
         services.AddScoped<IDeactiveProduct, DeactiveProduct>();
         services.AddScoped<IUpdateStock, UpdateStock>();
+
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<RegisterProductValidator>();
+        services.AddValidatorsFromAssemblyContaining<UpdateStockValidator>();
 
         return services;
     }
