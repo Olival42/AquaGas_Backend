@@ -33,6 +33,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-// necessário para testes com WebApplicationFactory
 public partial class Program { }
