@@ -4,23 +4,37 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>4c70bc7a-143c-4189-8b78-feef50cd0273</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
+
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
-    <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
-    <PackageReference Include="Mapster" Version="10.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.12.14" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+
+    <ProjectReference Include="..\Auth\AquaGas.Auth.Web\AquaGas.Auth.Web.csproj" />
+
+    <ProjectReference Include="..\Customer\AquaGas.Customer.Web\AquaGas.Customer.Web.csproj" />
+
+    <ProjectReference Include="..\Employee\AquaGas.Employee.Web\AquaGas.Employee.Web.csproj" />
+
+    <ProjectReference Include="..\Product\AquaGas.Product.Web\AquaGas.Product.Web.csproj" />
+
   </ItemGroup>
 
 </Project>
