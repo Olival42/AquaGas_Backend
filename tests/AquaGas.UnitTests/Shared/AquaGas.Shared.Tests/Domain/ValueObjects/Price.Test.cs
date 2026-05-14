@@ -1,4 +1,4 @@
-using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 using Xunit;
 
 public class PriceTests

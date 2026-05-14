@@ -13,6 +13,7 @@ using Mapster;
 using Moq;
 using Xunit;
 using AquaGas.Application.Services;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class UpdateProductTests
 {

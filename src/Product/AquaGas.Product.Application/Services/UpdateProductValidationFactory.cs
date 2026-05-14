@@ -3,6 +3,7 @@ using AquaGas.Product.Application.Dtos.Resposes;
 using AquaGas.Product.Domain.Enums;
 using AquaGas.Product.Domain.Factories;
 using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Shared.Errors;
 using AquaGas.Shared.Results;
 

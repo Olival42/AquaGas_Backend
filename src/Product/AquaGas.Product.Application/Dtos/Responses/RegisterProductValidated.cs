@@ -2,6 +2,7 @@ namespace AquaGas.Product.Application.Dtos.Resposes;
 
 using AquaGas.Product.Domain.Enums;
 using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public record RegisterProductValidated
 {

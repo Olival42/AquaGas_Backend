@@ -1,4 +1,4 @@
-using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 using Xunit;
 
 public class StockQuantityTests
@@ -139,7 +139,7 @@ public class StockQuantityTests
 
         Assert.True(result.IsFailure);
         Assert.Contains(result.Errors, e =>
-            e.Message == "Insufficient stock");
+            e.Code == "INSUFFICIENT_STOCK" && e.Message == "Insufficient stock");
     }
 
     [Fact]

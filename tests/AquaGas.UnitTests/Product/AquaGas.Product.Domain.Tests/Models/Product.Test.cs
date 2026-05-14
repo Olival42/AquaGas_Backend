@@ -2,6 +2,7 @@ using AquaGas.Product.Domain.Enums;
 using ProductEntity = AquaGas.Product.Domain.Models.Product;
 using AquaGas.Product.Domain.ValueObjects;
 using Xunit;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class ProductTests
 {

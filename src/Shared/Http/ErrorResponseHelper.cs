@@ -39,6 +39,8 @@ public static class ErrorResponseHelper
             "UNAUTHORIZED" => new UnauthorizedObjectResult(response),
             "NOT_FOUND" => new NotFoundObjectResult(response),
             "CONFLICT" => new ConflictObjectResult(response),
+            "INSUFFICIENT_STOCK" => new ConflictObjectResult(response),
+            "FORBIDDEN" => new ObjectResult(response) { StatusCode = 403 },
             _ => new ObjectResult(response) { StatusCode = 500 }
         };
     }
