@@ -1,5 +1,6 @@
 using AquaGas.Product.Domain.Enums;
 using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 
 namespace AquaGas.Product.Application.Dtos.Requests;
 

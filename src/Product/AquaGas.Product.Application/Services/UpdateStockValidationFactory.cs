@@ -1,6 +1,7 @@
 using AquaGas.Product.Application.Dtos.Requests;
 using AquaGas.Product.Domain.Factories;
 using AquaGas.Product.Domain.ValueObjects;
+using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Shared.Results;
 
 namespace AquaGas.Product.Application.Services;

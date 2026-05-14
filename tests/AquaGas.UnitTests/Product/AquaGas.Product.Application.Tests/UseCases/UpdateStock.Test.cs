@@ -14,6 +14,7 @@ using Mapster;
 using Moq;
 using Xunit;
 using AquaGas.Application.Services;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class UpdateStockTests
 {
@@ -185,7 +186,12 @@ public class UpdateStockTests
         var result = await _useCase.Execute(input, product.Id);
 
         Assert.True(result.IsFailure);
-        Assert.Equal("Insufficient stock", result.Errors.First().Message);
+        var err = result.Errors.First();
+        Assert.Equal("INSUFFICIENT_STOCK", err.Code);
+        Assert.Contains("Water 20L", err.Message, StringComparison.Ordinal);
+        Assert.Contains(product.Id.ToString(), err.Message, StringComparison.Ordinal);
+        Assert.Contains("Available: 2", err.Message, StringComparison.Ordinal);
+        Assert.Contains("requested: 10", err.Message, StringComparison.Ordinal);
 
         _stockMovementRepository.Verify(
             x => x.AddAsync(It.IsAny<StockMovement>()),

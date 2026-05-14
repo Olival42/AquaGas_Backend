@@ -12,6 +12,7 @@ using Xunit;
 using AquaGas.Application.Services;
 using AquaGas.Shared.Domain.Enums;
 using AquaGas.Shared.Errors;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class RegisterProductTests
 {

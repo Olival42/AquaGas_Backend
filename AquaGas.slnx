@@ -27,6 +27,14 @@
     <Project Path="src/Product/AquaGas.Product.Infrastructure/AquaGas.Product.Infrastructure.csproj" />
     <Project Path="src/Product/AquaGas.Product.Web/AquaGas.Product.Web.csproj" />
   </Folder>
+  <Folder Name="/src/Sale/">
+    <Project Path="src/Sale/AquaGas.Sale.Application/AquaGas.Sale.Application.csproj" />
+    <Project Path="src/Sale/AquaGas.Sale.Domain/AquaGas.Sale.Domain.csproj" />
+    <Project Path="src/Sale/AquaGas.Sale.Infrastructure/AquaGas.Sale.Infrastructure.csproj" />
+    <Project Path="src/Sale/AquaGas.Sale.Web/AquaGas.Sale.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/AquaGas.UnitTests/" />
   <Folder Name="/tests/AquaGas.UnitTests/Auth/">
     <Project Path="tests/AquaGas.UnitTests/Auth/AquaGas.Auth.Application.Tests/AquaGas.Auth.Application.Tests.csproj" />
     <Project Path="tests/AquaGas.UnitTests/Auth/AquaGas.Auth.Domain.Tests/AquaGas.Auth.Domain.Tests.csproj" />
@@ -46,5 +54,9 @@
   </Folder>
   <Folder Name="/tests/AquaGas.UnitTests/Shared/">
     <Project Path="tests/AquaGas.UnitTests/Shared/AquaGas.Shared.Tests/AquaGas.Shared.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Sale/">
+    <Project Path="tests/AquaGas.UnitTests/Sale/AquaGas.Sale.Application.Tests/AquaGas.Sale.Application.Tests.csproj" />
+    <Project Path="tests/AquaGas.UnitTests/Sale/AquaGas.Sale.Domain.Tests/AquaGas.Sale.Domain.Tests.csproj" />
   </Folder>
 </Solution>

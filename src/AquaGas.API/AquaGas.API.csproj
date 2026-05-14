@@ -35,6 +35,9 @@
 
     <ProjectReference Include="..\Product\AquaGas.Product.Web\AquaGas.Product.Web.csproj" />
 
+    <ProjectReference Include="..\Sale\AquaGas.Sale.Web\AquaGas.Sale.Web.csproj" />
+
+    <ProjectReference Include="..\Sale\AquaGas.Sale.Infrastructure\AquaGas.Sale.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

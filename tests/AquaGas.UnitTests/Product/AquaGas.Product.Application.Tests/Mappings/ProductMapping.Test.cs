@@ -6,6 +6,7 @@ using ProductEntity = AquaGas.Product.Domain.Models.Product;
 using AquaGas.Product.Domain.ValueObjects;
 using Mapster;
 using Xunit;
+using AquaGas.Shared.Domain.ValueObjects;
 
 namespace AquaGas.Tests.Modules.Product.Application.Mappings;
 

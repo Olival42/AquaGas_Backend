@@ -10,6 +10,7 @@ using AquaGas.Shared.Domain.Enums;
 using Moq;
 using Xunit;
 using AquaGas.Application.Services;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class DeactiveProductTests
 {

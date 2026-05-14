@@ -2,7 +2,7 @@ using System.Globalization;
 using AquaGas.Shared.Errors;
 using AquaGas.Shared.Results;
 
-namespace AquaGas.Product.Domain.ValueObjects;
+namespace AquaGas.Shared.Domain.ValueObjects;
 
 public sealed class Price : IEquatable<Price>
 {

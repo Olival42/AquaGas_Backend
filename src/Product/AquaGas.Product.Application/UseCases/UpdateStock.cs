@@ -67,7 +67,19 @@ public class UpdateStock : IUpdateStock
         };
 
         if (resultStockMovement.IsFailure)
-            return Result<ProductResponse>.Fail(resultStockMovement.Errors.ToArray());
+        {
+            var mapped = resultStockMovement.Errors
+                .Select(e => e.Code == "INSUFFICIENT_STOCK"
+                    ? Error.InsufficientStockForProduct(
+                        product.Name.Value,
+                        product.Id,
+                        product.Quantity.Value,
+                        v.Quantity.Value)
+                    : e)
+                .ToArray();
+
+            return Result<ProductResponse>.Fail(mapped);
+        }
 
         var stockMovement = StockMovement.Create(
             productId: id,

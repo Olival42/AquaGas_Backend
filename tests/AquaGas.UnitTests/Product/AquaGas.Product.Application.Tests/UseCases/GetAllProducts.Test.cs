@@ -6,6 +6,7 @@ using AquaGas.Product.Domain.ValueObjects;
 using AquaGas.Product.Application.Mappings;
 using Moq;
 using Xunit;
+using AquaGas.Shared.Domain.ValueObjects;
 
 public class GetAllProductsTests
 {

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AquaGas.Auth.Application.Services;
+using AquaGas.Auth.Domain.Enums;
 using AquaGas.Shared.Errors;
 using AquaGas.Shared.Results;
 using Microsoft.AspNetCore.Http;
@@ -45,5 +46,31 @@ public class UserContextService : IUserContextService
             );
 
         return Result<string>.Success(userName);
+    }
+
+    public Result<Role> GetRole()
+    {
+        var roleValue = _httpContextAccessor.HttpContext?
+            .User
+            .FindFirst(ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrWhiteSpace(roleValue))
+        {
+            return Result<Role>.Fail(
+                Error.Unauthorized(
+                    "Missing Role in token"));
+        }
+
+        if (!Enum.TryParse<Role>(
+            roleValue,
+            true,
+            out var role))
+        {
+            return Result<Role>.Fail(
+                Error.Unauthorized(
+                    "Invalid Role in token"));
+        }
+
+        return Result<Role>.Success(role);
     }
 }
