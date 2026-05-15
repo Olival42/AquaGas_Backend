@@ -5,6 +5,7 @@ using AquaGas.Product.Domain.Enums;
 using AquaGas.Product.Domain.Models;
 using AquaGas.Product.Domain.Repositories;
 using AquaGas.Sale.Application.Dtos.Requests;
+using AquaGas.Sale.Application.Dtos.Responses;
 using AquaGas.Sale.Domain.Models;
 using AquaGas.Sale.Domain.Repositories;
 using AquaGas.Shared.Domain.Enums;
@@ -35,7 +36,7 @@ public sealed class CancelSale : ICancelSale
         _auditLogService = auditLogService;
     }
 
-    public async Task<Result<string>> Execute(
+    public async Task<Result<CancelSaleResponse>> Execute(
         Guid id,
         CancelSaleInput input)
     {
@@ -43,24 +44,24 @@ public sealed class CancelSale : ICancelSale
         var userName = _userContextService.GetUserName();
 
         if (currentUser.IsFailure)
-            return Result<string>.Fail(currentUser.Errors.ToArray());
+            return Result<CancelSaleResponse>.Fail(currentUser.Errors.ToArray());
 
         if (userName.IsFailure)
-            return Result<string>.Fail(userName.Errors.ToArray());
+            return Result<CancelSaleResponse>.Fail(userName.Errors.ToArray());
 
         var sale = await _saleRepository.GetByIdWithItemsAsync(id);
 
         if (sale is null)
-            return Result<string>.Fail(
+            return Result<CancelSaleResponse>.Fail(
                 Error.NotFound("Sale not found"));
 
         if (sale.Status == SaleStatus.Canceled)
-            return Result<string>.Fail(
+            return Result<CancelSaleResponse>.Fail(
                 Error.Conflict(
                     "Sale already canceled"));
 
         if (sale.Date < DateTime.UtcNow.AddHours(-24))
-            return Result<string>.Fail(
+            return Result<CancelSaleResponse>.Fail(
                 Error.Conflict(
                     "Cancellation period expired"));
 
@@ -77,7 +78,7 @@ public sealed class CancelSale : ICancelSale
                     item.ProductId, false);
 
             if (product is null)
-                return Result<string>.Fail(
+                return Result<CancelSaleResponse>.Fail(
                     Error.NotFound(
                         $"Product {item.ProductId} not found"));
 
@@ -116,6 +117,11 @@ public sealed class CancelSale : ICancelSale
                 sale.CancelReason
             });
 
-        return Result<string>.Success("Sale canceled successfully");
+        return Result<CancelSaleResponse>.Success(new CancelSaleResponse
+        {
+            SaleId = sale.Id,
+            Status = sale.Status,
+            Reason = sale.CancelReason!
+        });
     }
 }
