@@ -68,9 +68,19 @@ public class CancelSaleTests
 
         Assert.True(result.IsSuccess);
 
+        Assert.NotNull(result.Value);
+
         Assert.Equal(
-            "Sale canceled successfully",
-            result.Value);
+            sale.Id,
+            result.Value!.SaleId);
+
+        Assert.Equal(
+            SaleStatus.Canceled,
+            result.Value.Status);
+
+        Assert.Equal(
+            "Customer canceled",
+            result.Value.Reason);
 
         Assert.Equal(
             SaleStatus.Canceled,
@@ -89,7 +99,7 @@ public class CancelSaleTests
             x => x.LogAsync(
                 It.IsAny<Guid>(),
                 It.IsAny<string>(),
-                It.IsAny<AquaGas.Shared.Domain.Enums.AuditAction>(),
+                It.IsAny<AuditAction>(),
                 "Sale",
                 sale.Id,
                 It.IsAny<object>(),
@@ -590,6 +600,49 @@ public class CancelSaleTests
 
         Assert.Equal(12, product1.Quantity.Value);
         Assert.Equal(13, product2.Quantity.Value);
+    }
+
+    [Fact]
+    public async Task Should_Return_Correct_Response_Data()
+    {
+        SetupAuthenticatedUser();
+
+        var product = CreateProduct();
+
+        var sale = CreateSale(product.Id);
+
+        _saleRepository
+            .Setup(x => x.GetByIdWithItemsAsync(sale.Id))
+            .ReturnsAsync(sale);
+
+        _productRepository
+            .Setup(x => x.GetByIdAsync(
+                product.Id,
+                false))
+            .ReturnsAsync(product);
+
+        var result = await _useCase.Execute(
+            sale.Id,
+            new CancelSaleInput
+            {
+                Reason = "Customer canceled"
+            });
+
+        Assert.True(result.IsSuccess);
+
+        Assert.NotNull(result.Value);
+
+        Assert.Equal(
+            sale.Id,
+            result.Value!.SaleId);
+
+        Assert.Equal(
+            SaleStatus.Canceled,
+            result.Value.Status);
+
+        Assert.Equal(
+            "Customer canceled",
+            result.Value.Reason);
     }
 
     private void SetupAuthenticatedUser()

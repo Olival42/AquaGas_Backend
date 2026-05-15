@@ -6,5 +6,5 @@ namespace AquaGas.Sale.Application.UseCases;
 
 public interface ICancelSale
 {
-    Task<Result<string>> Execute(Guid id, CancelSaleInput input);
+    Task<Result<CancelSaleResponse>> Execute(Guid id, CancelSaleInput input);
 }
