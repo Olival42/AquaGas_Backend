@@ -23,6 +23,7 @@ namespace AquaGas.Plan.Infrastructure.Migrations
                     CurrentDiscount = table.Column<double>(type: "double precision", precision: 5, scale: 2, nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FinishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DeliveryDay = table.Column<int>(type: "integer", nullable: false),
                     BillingDay = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),

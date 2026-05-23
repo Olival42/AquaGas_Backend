@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AquaGas.Plan.Infrastructure.Migrations
 {
     [DbContext(typeof(PlanDbContext))]
-    [Migration("20260521195914_InitialPlan")]
+    [Migration("20260523163616_InitialPlan")]
     partial class InitialPlan
     {
         /// <inheritdoc />
@@ -180,6 +180,9 @@ namespace AquaGas.Plan.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FinishedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
