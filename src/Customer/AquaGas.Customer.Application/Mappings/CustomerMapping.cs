@@ -8,18 +8,36 @@ using AquaGas.Customer.Application.Dtos.Responses;
 
 public static class CustomerMapping
 {
-    public static void Register()
+    private static readonly Lock Sync = new();
+    private static bool _globalRegistered;
+    public static void Register(TypeAdapterConfig? config = null)
     {
-        TypeAdapterConfig<RegisterCustomerValidated, CustomerEntity>
-            .NewConfig()
+        if (config is not null)
+        {
+            Apply(config);
+            return;
+        }
+
+        lock (Sync)
+        {
+            if (_globalRegistered)
+                return;
+
+            Apply(TypeAdapterConfig.GlobalSettings);
+            _globalRegistered = true;
+        }
+    }
+
+    private static void Apply(TypeAdapterConfig config)
+    {
+        config.NewConfig<RegisterCustomerValidated, CustomerEntity>()
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Document, src => src.Document)
             .Map(dest => dest.Email, src => src.Email)
             .Map(dest => dest.Phone, src => src.Phone)
             .Ignore(dest => dest.Addresses);
 
-        TypeAdapterConfig<RegisterAddressValidated, Address>
-            .NewConfig()
+        config.NewConfig<RegisterAddressValidated, Address>()
             .Map(dest => dest.Street, src => src.Street)
             .Map(dest => dest.Neighborhood, src => src.Neighborhood)
             .Map(dest => dest.Number, src => src.Number)
@@ -27,8 +45,7 @@ public static class CustomerMapping
             .Map(dest => dest.City, src => src.City)
             .Map(dest => dest.Cep, src => src.Cep);
 
-        TypeAdapterConfig<CustomerEntity, CustomerResponse>
-            .NewConfig()
+        config.NewConfig<CustomerEntity, CustomerResponse>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Document, src => src.Document.Value)
@@ -38,8 +55,7 @@ public static class CustomerMapping
             .Map(dest => dest.Address, src => src.Addresses.FirstOrDefault())
             .Map(dest => dest.CreatedAt, src => src.CreatedAt);
 
-        TypeAdapterConfig<Address, AddressResponse>
-            .NewConfig()
+        config.NewConfig<Address, AddressResponse>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Street, src => src.Street)
             .Map(dest => dest.Neighborhood, src => src.Neighborhood)

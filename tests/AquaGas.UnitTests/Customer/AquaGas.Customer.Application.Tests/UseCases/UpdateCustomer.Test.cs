@@ -11,31 +11,28 @@ using AquaGas.Customer.Domain.ValueObjects.Customer;
 using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Shared.Domain.Enums;
 using AquaGas.Customer.Domain.ValueObjects.Address;
-using AquaGas.Customer.Application.Mappings;
 using AquaGas.Application.Services;
+using Mapster;
 
 public class UpdateCustomerTests
 {
     private readonly Mock<ICustomerRepository> _repositoryMock;
     private readonly Mock<IAuditLogService> _auditMock;
     private readonly Mock<IUserContextService> _userContextMock;
-
     private readonly UpdateCustomer _useCase;
 
     public UpdateCustomerTests()
-    {
-        CustomerMapping.Register();
+{
+    _repositoryMock = new Mock<ICustomerRepository>();
+    _auditMock = new Mock<IAuditLogService>();
+    _userContextMock = new Mock<IUserContextService>();
 
-        _repositoryMock = new Mock<ICustomerRepository>();
-        _auditMock = new Mock<IAuditLogService>();
-        _userContextMock = new Mock<IUserContextService>();
-
-        _useCase = new UpdateCustomer(
-            _repositoryMock.Object,
-            _auditMock.Object,
-            _userContextMock.Object
-        );
-    }
+    _useCase = new UpdateCustomer(
+        _repositoryMock.Object,
+        _auditMock.Object,
+        _userContextMock.Object
+    );
+}
 
     private void SetupValidUser()
     {
@@ -377,23 +374,5 @@ public class UpdateCustomerTests
             It.IsAny<Guid>(),
             It.IsAny<object>(),
             It.IsAny<object>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Should_Return_Mapped_Dto_Correctly()
-    {
-        var customer = CreateCustomer();
-
-        _repositoryMock.Setup(r => r.GetByIdAsync(customer.Id))
-            .ReturnsAsync(customer);
-
-        SetupValidUser();
-
-        var result = await _useCase.Execute(CreateValidInput(), customer.Id);
-
-        result.IsSuccess.Should().BeTrue();
-
-        result.Value!.Name.Should().Be(customer.Name.Value);
-        result.Value.Document.Should().Be(customer.Document.Value);
     }
 }

@@ -8,9 +8,12 @@ using AquaGas.Employee.Application.Dtos.Responses;
 
 public class EmployeeMappingTests
 {
+    private readonly TypeAdapterConfig _config;
+
     public EmployeeMappingTests()
     {
-        EmployeeMapping.Register();
+        _config = new TypeAdapterConfig();
+        EmployeeMapping.Register(_config);
     }
 
     [Fact]
@@ -23,7 +26,7 @@ public class EmployeeMappingTests
             Phone.Create("44999999999").Value!
         );
 
-        var result = employee.Adapt<EmployeeResponse>();
+        var result = employee.Adapt<EmployeeResponse>(_config);
 
         Assert.Equal(employee.Id, result.Id);
         Assert.Equal(employee.Name.Value, result.Name);

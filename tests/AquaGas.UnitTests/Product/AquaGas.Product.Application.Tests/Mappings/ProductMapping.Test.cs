@@ -12,9 +12,12 @@ namespace AquaGas.Tests.Modules.Product.Application.Mappings;
 
 public class ProductMappingTests
 {
+    private readonly TypeAdapterConfig _config;
+
     public ProductMappingTests()
     {
-        ProductMapping.Register();
+        _config = new TypeAdapterConfig();
+        ProductMapping.Register(_config);
     }
 
     [Fact]
@@ -28,7 +31,7 @@ public class ProductMappingTests
             Quantity = StockQuantity.Create(20).Value!
         };
 
-        var product = validated.Adapt<ProductEntity>();
+        var product = validated.Adapt<ProductEntity>(_config);
 
         Assert.NotNull(product);
 
@@ -48,7 +51,7 @@ public class ProductMappingTests
             StockQuantity.Create(15).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.NotNull(response);
 
@@ -69,7 +72,7 @@ public class ProductMappingTests
             StockQuantity.Create(0).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.Equal(0, response.Quantity);
     }
@@ -84,7 +87,7 @@ public class ProductMappingTests
             StockQuantity.Create(100).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.Equal(9999.99m, response.Price);
     }
@@ -99,7 +102,7 @@ public class ProductMappingTests
             StockQuantity.Create(30).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.Equal("Água São Lourenço", response.Name);
     }
@@ -121,8 +124,8 @@ public class ProductMappingTests
             StockQuantity.Create(5).Value!
         );
 
-        var waterResponse = water.Adapt<ProductResponse>();
-        var gasResponse = gas.Adapt<ProductResponse>();
+        var waterResponse = water.Adapt<ProductResponse>(_config);
+        var gasResponse = gas.Adapt<ProductResponse>(_config);
 
         Assert.Equal(TypeProduct.Water, waterResponse.Type);
         Assert.Equal(TypeProduct.Gas, gasResponse.Type);
@@ -138,7 +141,7 @@ public class ProductMappingTests
             StockQuantity.Create(1).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.NotEqual(Guid.Empty, response.Id);
         Assert.Equal(product.Id, response.Id);
@@ -154,7 +157,7 @@ public class ProductMappingTests
             StockQuantity.Create(1).Value!
         );
 
-        var response = product.Adapt<ProductResponse>();
+        var response = product.Adapt<ProductResponse>(_config);
 
         Assert.Equal(11.00m, response.Price);
     }
@@ -169,8 +172,8 @@ public class ProductMappingTests
             StockQuantity.Create(10).Value!
         );
 
-        var response1 = product.Adapt<ProductResponse>();
-        var response2 = product.Adapt<ProductResponse>();
+        var response1 = product.Adapt<ProductResponse>(_config);
+        var response2 = product.Adapt<ProductResponse>(_config);
 
         Assert.NotSame(response1, response2);
 

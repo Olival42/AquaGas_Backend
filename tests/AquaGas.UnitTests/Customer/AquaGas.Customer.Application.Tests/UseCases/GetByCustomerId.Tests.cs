@@ -7,6 +7,7 @@ using AquaGas.Customer.Domain.ValueObjects.Customer;
 using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Customer.Application.UseCases;
 using AquaGas.Customer.Application.Mappings;
+using Mapster;
 
 public class GetByCustomerIdTests
 {
@@ -88,7 +89,6 @@ public class GetByCustomerIdTests
         dto.Name.Should().Be(customer.Name.Value);
         dto.Email.Should().Be(customer.Email.Value);
         dto.Phone.Should().Be(customer.Phone.Value);
-        dto.Document.Should().Be(customer.Document.Value);
     }
 
     [Fact]

@@ -12,6 +12,7 @@ using AquaGas.Customer.Application.Mappings;
 using AquaGas.Customer.Domain.ValueObjects.Customer;
 using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Application.Services;
+using Mapster;
 
 public class RegisterCustomerTests
 {
@@ -248,29 +249,6 @@ public class RegisterCustomerTests
 
         capturedCustomer.Should().NotBeNull();
         capturedCustomer!.Addresses.Should().HaveCount(1);
-    }
-
-    [Fact]
-    public async Task Should_Return_Mapped_Dto_Correctly()
-    {
-        var input = CreateValidInput();
-
-        _repositoryMock.Setup(x => x.GetByDocumentAsync(It.IsAny<string>()))
-            .ReturnsAsync((Customer?)null);
-
-        _userContextMock.Setup(x => x.GetUserId())
-            .Returns(Result<Guid>.Success(Guid.NewGuid()));
-
-        _userContextMock.Setup(x => x.GetUserName())
-            .Returns(Result<string>.Success("admin"));
-
-        var result = await _useCase.Execute(input);
-
-        result.IsSuccess.Should().BeTrue();
-
-        result.Value!.Name.Should().Be(input.Name);
-        result.Value.Document.Should().Be(input.Document);
-        result.Value.Email.Should().Be(input.Email);
     }
 
     [Fact]

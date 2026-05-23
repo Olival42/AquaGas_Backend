@@ -1,4 +1,5 @@
 using AquaGas.Customer.Application.Mappings;
+using Mapster;
 
 namespace AquaGas.Customer.Application;
 
