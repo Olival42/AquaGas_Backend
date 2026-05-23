@@ -12,19 +12,22 @@ using AquaGas.Shared.Responses;
 public class CustomerController : ControllerBase
 {
     private readonly IRegisterCustomer _registerCustomer;
+    private readonly IExistsCustomerByDocument _existsCustomerByDocument;
     private readonly IGetByCustomerId _getByCustomerId;
     private readonly IGetAllCustomers _getAllCustomers;
     private readonly IDeactiveCustomer _deactiveCustomer;
-     private readonly IUpdateCustomer _updateCustomer;
+    private readonly IUpdateCustomer _updateCustomer;
 
     public CustomerController(
         IRegisterCustomer registerCustomer,
+        IExistsCustomerByDocument existsCustomerByDocument,
         IGetByCustomerId getByCustomerId,
         IGetAllCustomers getAllCustomers,
         IDeactiveCustomer deactiveCustomer,
         IUpdateCustomer updateCustomer)
     {
         _registerCustomer = registerCustomer;
+        _existsCustomerByDocument = existsCustomerByDocument;
         _getByCustomerId = getByCustomerId;
         _getAllCustomers = getAllCustomers;
         _deactiveCustomer = deactiveCustomer;
@@ -52,6 +55,25 @@ public class CustomerController : ControllerBase
             new { id = result.Value!.Id },
             result.ToApiResponse()
         );
+    }
+
+    [Authorize]
+    [HttpGet("exists")]
+    public async Task<IActionResult> ExistsByDocument([FromQuery] string document)
+    {
+        var result = await _existsCustomerByDocument.Execute(document);
+
+        if (result.IsFailure)
+        {
+            var firstError = result.Errors.First();
+
+            return ErrorResponseHelper.ToActionResult(
+                firstError.Code,
+                result.ToApiResponse()
+            );
+        }
+
+        return Ok(result.ToApiResponse());
     }
 
     [Authorize]

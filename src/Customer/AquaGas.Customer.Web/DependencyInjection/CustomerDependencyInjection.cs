@@ -22,6 +22,7 @@ public static class CustomerDependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
 
         services.AddScoped<IRegisterCustomer, RegisterCustomer>();
+        services.AddScoped<IExistsCustomerByDocument, ExistsCustomerByDocument>();
         services.AddScoped<IGetByCustomerId, GetByCustomerId>();
         services.AddScoped<IGetAllCustomers, GetAllCustomers>();
         services.AddScoped<IUpdateCustomer, UpdateCustomer>();
