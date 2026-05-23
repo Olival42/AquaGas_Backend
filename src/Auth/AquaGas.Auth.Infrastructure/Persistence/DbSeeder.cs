@@ -40,5 +40,9 @@ public static class DbSeeder
 
         await authContext.Users.AddAsync(user);
         await authContext.SaveChangesAsync();
+
+        employee.AssignUserId(user.Id);
+        employeeContext.Employees.Update(employee);
+        await employeeContext.SaveChangesAsync();
     }
 }

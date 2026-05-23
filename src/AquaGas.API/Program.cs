@@ -24,11 +24,13 @@ using AquaGas.Employee.Web.DependencyInjection;
 using AquaGas.Product.Web.DependencyInjection;
 using AquaGas.Auth.Web.DependencyInjection;
 using AquaGas.Sale.Web.DependencyInjection;
+using AquaGas.Plan.Web.DependencyInjection;
 using AquaGas.Employee.Infrastructure.Persistence;
 using AquaGas.Customer.Infrastructure.Persistence;
 using AquaGas.Product.Infrastructure.Persistence;
 using AquaGas.Sale.Infrastructure.Persistence;
 using AquaGas.Shared.Infrastructure.Persistence;
+using AquaGas.Plan.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +89,7 @@ builder.Services.AddEmployeeModule(builder.Configuration);
 builder.Services.AddCustomerModule(builder.Configuration);
 builder.Services.AddProductModule(builder.Configuration);
 builder.Services.AddSaleModule(builder.Configuration);
+builder.Services.AddPlanModule(builder.Configuration);
 
 builder.Services.AddFluentValidationAutoValidation();
 
@@ -126,6 +129,9 @@ if (!app.Environment.IsEnvironment("Testing"))
     var saleDb =
         scope.ServiceProvider.GetRequiredService<SaleDbContext>();
 
+    var planDb =
+        scope.ServiceProvider.GetRequiredService<PlanDbContext>();
+
     var appDb =
         scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
@@ -134,6 +140,7 @@ if (!app.Environment.IsEnvironment("Testing"))
     await customerDb.Database.MigrateAsync();
     await productDb.Database.MigrateAsync();
     await saleDb.Database.MigrateAsync();
+    await planDb.Database.MigrateAsync();
     await appDb.Database.MigrateAsync();
 
     var hasher =

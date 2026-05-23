@@ -21,6 +21,12 @@
     <Project Path="src/Employee/AquaGas.Employee.Infrastructure/AquaGas.Employee.Infrastructure.csproj" />
     <Project Path="src/Employee/AquaGas.Employee.Web/AquaGas.Employee.Web.csproj" />
   </Folder>
+  <Folder Name="/src/Plan/">
+    <Project Path="src/Plan/AquaGas.Plan.Application/AquaGas.Plan.Application.csproj" />
+    <Project Path="src/Plan/AquaGas.Plan.Domain/AquaGas.Plan.Domain.csproj" />
+    <Project Path="src/Plan/AquaGas.Plan.Infrastructure/AquaGas.Plan.Infrastructure.csproj" />
+    <Project Path="src/Plan/AquaGas.Plan.Web/AquaGas.Plan.Web.csproj" />
+  </Folder>
   <Folder Name="/src/Product/">
     <Project Path="src/Product/AquaGas.Product.Application/AquaGas.Product.Application.csproj" />
     <Project Path="src/Product/AquaGas.Product.Domain/AquaGas.Product.Domain.csproj" />

@@ -24,6 +24,13 @@ public class EmployeeRepository : IEmployeeRepository
                 (!onlyActive || e.IsActive));
     }
 
+    public async Task<EmployeeEntity?> GetByUserIdAsync(Guid id)
+    {
+        return await _context.Employees
+            .FirstOrDefaultAsync(e =>
+                e.UserId == id);
+    }
+
     public async Task AddAsync(EmployeeEntity employee)
     {
         await _context.Employees.AddAsync(employee);

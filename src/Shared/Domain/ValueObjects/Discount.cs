@@ -15,9 +15,9 @@ public sealed record Discount
 
     public static Result<Discount> Create(double value)
     {
-        if (value < 0)
+        if (value <= 0)
             return Result<Discount>.Fail(
-                Error.Validation("Discount cannot be negative"));
+                Error.Validation("Discount must be greater than 0"));
 
         if (value > 100)
             return Result<Discount>.Fail(
