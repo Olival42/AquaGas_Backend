@@ -37,7 +37,7 @@ public class DiscountTests
         var result = Discount.Create(-1);
 
         Assert.True(result.IsFailure);
-        Assert.Equal("Discount cannot be negative", result.Errors[0].Message);
+        Assert.Equal("Discount must be greater than 0", result.Errors[0].Message);
     }
 
     [Fact]
