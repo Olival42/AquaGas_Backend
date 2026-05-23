@@ -13,4 +13,5 @@ public interface IEmployeeRepository
     Task SaveChangesAsync();
     Task<IEnumerable<EmployeeEntity>> GetAllAsync(bool onlyActive = true);
     void Update(EmployeeEntity employee);
+    Task<EmployeeEntity?> GetByUserIdAsync(Guid id);
 }
