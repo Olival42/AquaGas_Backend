@@ -10,4 +10,5 @@ public record CustomerResponse
     public string Phone { get; init; } = null!;
 
     public AddressResponse Address { get; init; } = null!;
+    public DateTime CreatedAt { get; init; }
 }

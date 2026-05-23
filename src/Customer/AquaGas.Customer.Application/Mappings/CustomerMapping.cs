@@ -35,7 +35,8 @@ public static class CustomerMapping
             .Map(dest => dest.TypeDocument, src => src.Document.Type)
             .Map(dest => dest.Email, src => src.Email.Value)
             .Map(dest => dest.Phone, src => src.Phone.Value)
-            .Map(dest => dest.Address, src => src.Addresses.FirstOrDefault());
+            .Map(dest => dest.Address, src => src.Addresses.FirstOrDefault())
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
 
         TypeAdapterConfig<Address, AddressResponse>
             .NewConfig()

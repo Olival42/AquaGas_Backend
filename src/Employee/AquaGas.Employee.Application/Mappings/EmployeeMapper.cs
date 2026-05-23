@@ -14,6 +14,7 @@ public static class EmployeeMapping
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Cpf, src => src.CPF)
             .Map(dest => dest.Email, src => src.Email)
-            .Map(dest => dest.Phone, src => src.Phone);
+            .Map(dest => dest.Phone, src => src.Phone)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
     }
 }

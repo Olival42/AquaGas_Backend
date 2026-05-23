@@ -16,6 +16,7 @@ public sealed class Product
     public Price Price { get; private set; } = null!;
     public StockQuantity Quantity { get; private set; } = null!;
     public bool IsActive { get; private set; }
+    public DateTime CreatedAt { get; init; }
 
     private Product() { }
 
@@ -32,6 +33,7 @@ public sealed class Product
         Price = price;
         Quantity = quantity;
         IsActive = true;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public void Update(

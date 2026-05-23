@@ -5,5 +5,6 @@ public record EmployeeResponse(
     string Name,
     string Cpf,
     string Email,
-    string Phone)
+    string Phone,
+    DateTime CreatedAt)
 { }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AquaGas.Product.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialProduct : Migration
+    public partial class NomeDaMigracao : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,8 @@ namespace AquaGas.Product.Infrastructure.Migrations
                     Type = table.Column<string>(type: "text", nullable: false),
                     price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

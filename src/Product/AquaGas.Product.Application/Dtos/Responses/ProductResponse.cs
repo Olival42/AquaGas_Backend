@@ -9,4 +9,5 @@ public record ProductResponse
     public TypeProduct Type { get; init; }
     public decimal Price { get; init; }
     public int Quantity { get; init; }
+    public DateTime CreatedAt { get; init; }
 }

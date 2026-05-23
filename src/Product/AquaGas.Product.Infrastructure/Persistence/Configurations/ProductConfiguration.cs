@@ -13,6 +13,9 @@ public class ProductConfiguration
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+
         builder.Property(x => x.NormalizedName)
             .HasMaxLength(150)
             .IsRequired();

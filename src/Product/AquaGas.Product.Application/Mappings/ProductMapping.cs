@@ -22,6 +22,7 @@ public static class ProductMapping
             .Map(dest => dest.Name, src => src.Name.Value)
             .Map(dest => dest.Type, src => src.Type)
             .Map(dest => dest.Price, src => src.Price.Value)
-            .Map(dest => dest.Quantity, src => src.Quantity.Value);
+            .Map(dest => dest.Quantity, src => src.Quantity.Value)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
     }
 }

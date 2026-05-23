@@ -28,6 +28,9 @@ namespace AquaGas.Product.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -88,23 +91,6 @@ namespace AquaGas.Product.Infrastructure.Migrations
 
             modelBuilder.Entity("AquaGas.Product.Domain.Models.Product", b =>
                 {
-                    b.OwnsOne("AquaGas.Product.Domain.ValueObjects.Price", "Price", b1 =>
-                        {
-                            b1.Property<Guid>("ProductId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("price");
-
-                            b1.HasKey("ProductId");
-
-                            b1.ToTable("products");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
-
                     b.OwnsOne("AquaGas.Product.Domain.ValueObjects.ProductName", "Name", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
@@ -124,7 +110,24 @@ namespace AquaGas.Product.Infrastructure.Migrations
                                 .HasForeignKey("ProductId");
                         });
 
-                    b.OwnsOne("AquaGas.Product.Domain.ValueObjects.StockQuantity", "Quantity", b1 =>
+                    b.OwnsOne("AquaGas.Shared.Domain.ValueObjects.Price", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("price");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
+
+                    b.OwnsOne("AquaGas.Shared.Domain.ValueObjects.StockQuantity", "Quantity", b1 =>
                         {
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uuid");
