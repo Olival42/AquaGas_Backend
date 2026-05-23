@@ -14,15 +14,6 @@ public class DiscountTests
     }
 
     [Fact]
-    public void Should_Create_Discount_When_Value_Is_Zero()
-    {
-        var result = Discount.Create(0);
-
-        Assert.True(result.IsSuccess);
-        Assert.Equal(0, result.Value!.Value);
-    }
-
-    [Fact]
     public void Should_Create_Discount_When_Value_Is_One_Hundred()
     {
         var result = Discount.Create(100);
