@@ -38,6 +38,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<bool> AnyByDocumentAsync(string document)
     {
         return await _context.Customers
+            .AsNoTracking()
             .AnyAsync(c => c.Document.Value == document);
     }
 
