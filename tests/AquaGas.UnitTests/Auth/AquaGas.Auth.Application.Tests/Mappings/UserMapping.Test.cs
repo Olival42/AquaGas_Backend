@@ -8,9 +8,12 @@ using AquaGas.Auth.Application.Dtos.Responses;
 
 public class UserMappingTests
 {
+    private readonly TypeAdapterConfig _config;
+
     public UserMappingTests()
     {
-        UserMapping.Register();
+        _config = new TypeAdapterConfig();
+        UserMapping.Register(_config);
     }
 
     private User CreateUser()
@@ -26,7 +29,7 @@ public class UserMappingTests
     {
         var user = CreateUser();
 
-        var response = user.Adapt<UserResponse>();
+        var response = user.Adapt<UserResponse>(_config);
 
         Assert.NotNull(response);
         Assert.Equal(user.Id, response.UserId);

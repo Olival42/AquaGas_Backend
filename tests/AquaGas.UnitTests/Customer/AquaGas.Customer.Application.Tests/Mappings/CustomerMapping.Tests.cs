@@ -11,9 +11,12 @@ using AquaGas.Shared.Domain.ValueObjects;
 
 public class CustomerMappingTests
 {
+    private readonly TypeAdapterConfig _config;
+
     public CustomerMappingTests()
     {
-        CustomerMapping.Register();
+        _config = new TypeAdapterConfig();
+        CustomerMapping.Register(_config);
     }
 
     private Customer CreateCustomerWithAddress()
@@ -58,7 +61,7 @@ public class CustomerMappingTests
     {
         var customer = CreateCustomerWithAddress();
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Id.Should().Be(customer.Id);
         result.Name.Should().Be(customer.Name.Value);
@@ -76,7 +79,7 @@ public class CustomerMappingTests
     {
         var customer = CreateCustomerWithAddress();
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Document.Should().BeOfType<string>();
         result.Document.Should().Be("55964416004");
@@ -87,7 +90,7 @@ public class CustomerMappingTests
     {
         var customer = CreateCustomerWithAddress();
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Email.Should().Be("email@email.com");
         result.Phone.Should().Be("44999999999");
@@ -98,7 +101,7 @@ public class CustomerMappingTests
     {
         var customer = CreateCustomerWithAddress();
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Address.Should().NotBeNull();
         result.Address!.Street.Should().Be("Rua A");
@@ -113,7 +116,7 @@ public class CustomerMappingTests
     {
         var customer = CreateCustomerWithoutAddress();
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Address.Should().BeNull();
     }
@@ -126,7 +129,7 @@ public class CustomerMappingTests
         customer.AddAddress(CreateAddress("Rua A"));
         customer.AddAddress(CreateAddress("Rua B"));
 
-        var result = customer.Adapt<CustomerResponse>();
+        var result = customer.Adapt<CustomerResponse>(_config);
 
         result.Address!.Street.Should().Be("Rua A");
     }
@@ -150,7 +153,7 @@ public class CustomerMappingTests
             }
         };
 
-        var customer = validated.Adapt<Customer>();
+        var customer = validated.Adapt<Customer>(_config);
 
         customer.Name.Value.Should().Be("João");
         customer.Document.Value.Should().Be("55964416004");
@@ -173,7 +176,7 @@ public class CustomerMappingTests
             Cep = Cep.Create("87000000").Value!
         };
 
-        var address = validated.Adapt<Address>();
+        var address = validated.Adapt<Address>(_config);
 
         address.Street.Should().Be("Rua A");
         address.Neighborhood.Should().Be("Centro");
@@ -188,7 +191,7 @@ public class CustomerMappingTests
     {
         var address = CreateAddress("Rua A");
 
-        var result = address.Adapt<AddressResponse>();
+        var result = address.Adapt<AddressResponse>(_config);
 
         result.Id.Should().Be(address.Id);
         result.Street.Should().Be(address.Street);

@@ -11,6 +11,7 @@ using AquaGas.Shared.Results;
 using AquaGas.Shared.Domain.Enums;
 using AquaGas.Customer.Application.Mappings;
 using AquaGas.Application.Services;
+using Mapster;
 
 public class DeactiveCustomerTests
 {
@@ -19,10 +20,12 @@ public class DeactiveCustomerTests
     private readonly Mock<IAuditLogService> _auditMock;
 
     private readonly DeactiveCustomer _useCase;
+    private readonly TypeAdapterConfig _config;
 
     public DeactiveCustomerTests()
     {
-        CustomerMapping.Register();
+        _config = new TypeAdapterConfig();
+        CustomerMapping.Register(_config);
 
         _repositoryMock = new Mock<ICustomerRepository>();
         _userContextMock = new Mock<IUserContextService>();

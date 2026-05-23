@@ -7,6 +7,7 @@ using AquaGas.Customer.Domain.Models;
 using AquaGas.Customer.Domain.ValueObjects.Customer;
 using AquaGas.Shared.Domain.ValueObjects;
 using AquaGas.Customer.Application.Mappings;
+using Mapster;
 
 public class GetAllCustomersTests
 {
