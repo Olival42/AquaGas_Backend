@@ -79,14 +79,8 @@ public sealed class CancelPlan : ICancelPlan
         var deliveries = await _deliveryRepository.GetByPlanIdAsync(planId);
         var billings = await _billingRepository.GetByPlanIdAsync(planId);
 
-        var paidPeriods = billings
-            .Where(x => x.Status == BillingStatus.Paid)
-            .Select(x => x.Period)
-            .ToList();
-
         var pendingDeliveries = deliveries
-            .Where(x => (x.Status == DeliveryStatus.Pending || x.Status == DeliveryStatus.Late) &&
-                        !paidPeriods.Contains(x.Period))
+            .Where(x => x.Status == DeliveryStatus.Pending || x.Status == DeliveryStatus.Late)
             .ToList();
 
         if (pendingDeliveries.Any(x => x.DueDate.Date == DateTime.UtcNow.Date))

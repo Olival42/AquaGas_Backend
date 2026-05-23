@@ -19,14 +19,20 @@ public sealed class UpgradePlanInputValidator : AbstractValidator<UpgradePlanInp
 
         RuleFor(x => x.DurationInMonths)
             .NotNull()
-            .GreaterThan(0)
             .When(x => x.Cycle == PlanCycle.Custom)
-            .WithMessage("Duration in months is required for a custom cycle and must be greater than zero.");
+            .WithMessage("Duration in months is required for a custom cycle.");
+
+        RuleFor(x => x.DurationInMonths)
+            .GreaterThan(0)
+            .When(x =>
+                x.Cycle == PlanCycle.Custom &&
+                x.DurationInMonths.HasValue)
+            .WithMessage("Duration in months must be greater than zero.");
 
         RuleFor(x => x.DurationInMonths)
             .Null()
-            .When(x => x.Cycle.HasValue && x.Cycle != PlanCycle.Custom)
-            .WithMessage("Duration in months must be null when cycle is not custom.");
+            .WithMessage("Duration in months must be null when cycle is not custom.")
+            .When(x => x.Cycle.HasValue && x.Cycle != PlanCycle.Custom);
 
         RuleFor(x => x.Items)
             .NotEmpty()
