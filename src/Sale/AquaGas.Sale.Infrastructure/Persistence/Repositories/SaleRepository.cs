@@ -52,6 +52,16 @@ public class SaleRepository : ISaleRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<SaleEntity>> GetByCustomerIdWithItemsAsync(Guid customerId)
+    {
+        return await _context.Sales
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .Where(x => x.CustomerId == customerId)
+            .OrderByDescending(x => x.Date)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<SaleEntity>> GetByPeriodAsync(
         DateTime? startDate,
         DateTime? endDate)

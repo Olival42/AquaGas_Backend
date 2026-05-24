@@ -38,6 +38,17 @@ public sealed class PlanRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<List<PlanEntity>> GetByCustomerIdAsync(
+        Guid customerId)
+    {
+        return await _context.Plans
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .Where(x => x.CustomerId == customerId)
+            .OrderByDescending(x => x.StartDate)
+            .ToListAsync();
+    }
+
     public async Task<List<PlanEntity>> GetAllAsync()
     {
         return await _context.Plans

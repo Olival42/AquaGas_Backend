@@ -17,6 +17,7 @@ public class CustomerController : ControllerBase
     private readonly IGetAllCustomers _getAllCustomers;
     private readonly IDeactiveCustomer _deactiveCustomer;
     private readonly IUpdateCustomer _updateCustomer;
+    private readonly ICustomerConsumptionHistory _customerConsumptionHistory;
 
     public CustomerController(
         IRegisterCustomer registerCustomer,
@@ -24,7 +25,8 @@ public class CustomerController : ControllerBase
         IGetByCustomerId getByCustomerId,
         IGetAllCustomers getAllCustomers,
         IDeactiveCustomer deactiveCustomer,
-        IUpdateCustomer updateCustomer)
+        IUpdateCustomer updateCustomer,
+        ICustomerConsumptionHistory customerConsumptionHistory)
     {
         _registerCustomer = registerCustomer;
         _existsCustomerByDocument = existsCustomerByDocument;
@@ -32,6 +34,7 @@ public class CustomerController : ControllerBase
         _getAllCustomers = getAllCustomers;
         _deactiveCustomer = deactiveCustomer;
         _updateCustomer = updateCustomer;
+        _customerConsumptionHistory = customerConsumptionHistory;
     }
 
     [Authorize]
@@ -100,6 +103,27 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var result = await _getAllCustomers.Execute();
+
+        if (result.IsFailure)
+        {
+            var firstError = result.Errors.First();
+
+            return ErrorResponseHelper.ToActionResult(
+                firstError.Code,
+                result.ToApiResponse()
+            );
+        }
+
+        return Ok(result.ToApiResponse());
+    }
+
+    [Authorize]
+    [HttpPost("{id}/consumption-history")]
+    public async Task<IActionResult> GetConsumptionHistory(
+        Guid id,
+        [FromBody] CustomerConsumptionHistoryInput input)
+    {
+        var result = await _customerConsumptionHistory.Execute(id, input);
 
         if (result.IsFailure)
         {

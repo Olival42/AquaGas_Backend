@@ -10,6 +10,8 @@ public interface IPlanRepository
 
     Task<PlanEntity?> GetByIdAsync(Guid id);
 
+    Task<List<PlanEntity>> GetByCustomerIdAsync(Guid customerId);
+
     Task<List<PlanEntity>> GetAllAsync();
 
     Task SaveChangesAsync();

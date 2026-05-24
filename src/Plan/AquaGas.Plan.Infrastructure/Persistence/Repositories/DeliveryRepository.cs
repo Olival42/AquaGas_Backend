@@ -47,6 +47,21 @@ public sealed class DeliveryRepository
             .ToListAsync();
     }
 
+    public async Task<List<Delivery>> GetByPlanIdsAsync(
+        IEnumerable<Guid> planIds)
+    {
+        var planIdList = planIds.Distinct().ToList();
+
+        if (planIdList.Count == 0)
+            return [];
+
+        return await _context.Deliveries
+            .AsNoTracking()
+            .Where(x => planIdList.Contains(x.PlanId))
+            .OrderByDescending(x => x.DeliveryDate ?? x.DueDate)
+            .ToListAsync();
+    }
+
     public async Task<List<Delivery>> GetPendingAsync()
     {
         return await _context.Deliveries

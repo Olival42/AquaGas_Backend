@@ -23,6 +23,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Customer\AquaGas.Customer.Application\AquaGas.Customer.Application.csproj" />
     <ProjectReference Include="..\..\..\..\src\Customer\AquaGas.Customer.Domain\AquaGas.Customer.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Auth\AquaGas.Auth.Application\AquaGas.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Auth\AquaGas.Auth.Domain\AquaGas.Auth.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Plan\AquaGas.Plan.Domain\AquaGas.Plan.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Product\AquaGas.Product.Domain\AquaGas.Product.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Sale\AquaGas.Sale.Domain\AquaGas.Sale.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>
