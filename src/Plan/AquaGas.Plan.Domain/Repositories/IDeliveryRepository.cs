@@ -12,6 +12,8 @@ public interface IDeliveryRepository
 
     Task<List<Delivery>> GetByPlanIdAsync(Guid planId);
 
+    Task<List<Delivery>> GetByPlanIdsAsync(IEnumerable<Guid> planIds);
+
     Task<List<Delivery>> GetPendingAsync();
 
     Task SaveChangesAsync();
