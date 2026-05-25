@@ -7,6 +7,7 @@ public interface ISaleRepository
     Task<SaleEntity?> GetByIdAsync(Guid id);
     Task<SaleEntity?> GetByIdWithItemsAsync(Guid id);
     Task<IEnumerable<SaleEntity>> GetByIdsAsync(IEnumerable<Guid> ids);
+    Task<IEnumerable<SaleEntity>> GetByCustomerIdWithItemsAsync(Guid customerId);
     Task AddAsync(SaleEntity sale);
     Task SaveChangesAsync();
     Task<IEnumerable<SaleEntity>> GetAllAsync();

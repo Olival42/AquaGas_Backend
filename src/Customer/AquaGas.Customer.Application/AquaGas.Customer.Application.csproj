@@ -9,6 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\AquaGas.Customer.Domain\AquaGas.Customer.Domain.csproj" />
     <ProjectReference Include="..\..\Auth\AquaGas.Auth.Application\AquaGas.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\Auth\AquaGas.Auth.Domain\AquaGas.Auth.Domain.csproj" />
+    <ProjectReference Include="..\..\Plan\AquaGas.Plan.Domain\AquaGas.Plan.Domain.csproj" />
+    <ProjectReference Include="..\..\Product\AquaGas.Product.Domain\AquaGas.Product.Domain.csproj" />
+    <ProjectReference Include="..\..\Sale\AquaGas.Sale.Domain\AquaGas.Sale.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.csproj" />
   </ItemGroup>
 
