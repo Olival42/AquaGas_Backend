@@ -27,9 +27,11 @@ public static class CustomerDependencyInjection
         services.AddScoped<IGetAllCustomers, GetAllCustomers>();
         services.AddScoped<IUpdateCustomer, UpdateCustomer>();
         services.AddScoped<IDeactiveCustomer, DeactiveCustomer>();
+        services.AddScoped<ICustomerConsumptionHistory, CustomerConsumptionHistory>();
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<RegisterCustomerValidator>();
+        services.AddValidatorsFromAssemblyContaining<CustomerConsumptionHistoryValidator>();
 
         return services;
     }

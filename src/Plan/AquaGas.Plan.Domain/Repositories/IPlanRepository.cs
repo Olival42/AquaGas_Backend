@@ -14,6 +14,7 @@ public interface IPlanRepository
 
     Task<Dictionary<Guid, PlanEntity>> GetByDeliveryReferenceIdsAsync(
         IEnumerable<Guid> deliveryReferenceIds);
+    Task<List<PlanEntity>> GetByCustomerIdAsync(Guid customerId);
 
     Task<List<PlanEntity>> GetAllAsync();
 
