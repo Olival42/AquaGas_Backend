@@ -47,6 +47,21 @@ public sealed class DeliveryRepository
             .ToListAsync();
     }
 
+    public async Task<List<Delivery>> GetDeliveredByPeriodAsync(
+        DateTime start,
+        DateTime end)
+    {
+        return await _context.Deliveries
+            .AsNoTracking()
+            .Where(x =>
+                x.Status == DeliveryStatus.Delivered &&
+                x.DeliveryDate.HasValue &&
+                x.DeliveryDate.Value >= start &&
+                x.DeliveryDate.Value <= end)
+            .OrderByDescending(x => x.DeliveryDate)
+            .ToListAsync();
+    }
+
     public async Task<List<Delivery>> GetPendingAsync()
     {
         return await _context.Deliveries

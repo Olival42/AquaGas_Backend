@@ -1,6 +1,6 @@
 using AquaGas.Product.Domain.Models;
-using AquaGas.Shared.Infrastructure.Persistence;
 using AquaGas.Product.Application.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace AquaGas.Product.Infrastructure.Persistence.Repositories;
 
@@ -16,5 +16,18 @@ public class StockMovementRepository : IStockMovementRepository
     public async Task AddAsync(StockMovement log)
     {
         await _context.StockMovements.AddAsync(log);
+    }
+
+    public async Task<List<StockMovement>> GetReportAsync(
+        DateTime start,
+        DateTime end)
+    {
+        var query = _context.StockMovements
+            .AsNoTracking()
+            .Where(x => x.CreatedAt >= start && x.CreatedAt <= end);
+
+        return await query
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
     }
 }

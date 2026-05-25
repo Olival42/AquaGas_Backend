@@ -158,16 +158,6 @@ public sealed class RegisterSale : IRegisterSale
 
             productsToPersist[product.Id] = product;
 
-            var stockMovement = StockMovement.Create(
-                productId: product.Id,
-                type: StockMovementType.Exit,
-                quantity: item.Quantity.Value,
-                reason: "Sale completed",
-                createdBy: currentUserId.Value
-            );
-
-            await _stockMovementRepository.AddAsync(stockMovement);
-
             lineContexts.Add(new SaleLineContext(
                 product,
                 item.Quantity,
@@ -202,6 +192,20 @@ public sealed class RegisterSale : IRegisterSale
             employeeId,
             totalResult.Value!,
             validated.Discount);
+
+        foreach (var line in lineContexts)
+        {
+            var stockMovement = StockMovement.Create(
+                productId: line.Product.Id,
+                type: StockMovementType.Exit,
+                quantity: line.Quantity.Value,
+                reason: "Sale completed",
+                createdBy: currentUserId.Value,
+                referenceId: sale.Id
+            );
+
+            await _stockMovementRepository.AddAsync(stockMovement);
+        }
 
         foreach (var line in lineContexts)
         {

@@ -10,6 +10,11 @@ public interface IPlanRepository
 
     Task<PlanEntity?> GetByIdAsync(Guid id);
 
+    Task<List<PlanEntity>> GetByIdsAsync(IEnumerable<Guid> ids);
+
+    Task<Dictionary<Guid, PlanEntity>> GetByDeliveryReferenceIdsAsync(
+        IEnumerable<Guid> deliveryReferenceIds);
+
     Task<List<PlanEntity>> GetAllAsync();
 
     Task SaveChangesAsync();
