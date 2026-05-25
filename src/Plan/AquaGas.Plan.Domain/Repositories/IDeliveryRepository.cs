@@ -12,6 +12,9 @@ public interface IDeliveryRepository
 
     Task<List<Delivery>> GetByPlanIdAsync(Guid planId);
 
+    Task<List<Delivery>> GetDeliveredByPeriodAsync(
+        DateTime start,
+        DateTime end);
     Task<List<Delivery>> GetByPlanIdsAsync(IEnumerable<Guid> planIds);
 
     Task<List<Delivery>> GetPendingAsync();

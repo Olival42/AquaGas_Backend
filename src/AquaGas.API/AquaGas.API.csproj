@@ -42,6 +42,8 @@
     <ProjectReference Include="..\Plan\AquaGas.Plan.Infrastructure\AquaGas.Plan.Infrastructure.csproj" />
 
     <ProjectReference Include="..\Plan\AquaGas.Plan.Web\AquaGas.Plan.Web.csproj" />
+
+    <ProjectReference Include="..\Report\AquaGas.Report.Web\AquaGas.Report.Web.csproj" />
   </ItemGroup>
 
 </Project>

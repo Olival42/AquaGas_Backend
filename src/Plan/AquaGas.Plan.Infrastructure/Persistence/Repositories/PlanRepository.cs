@@ -38,6 +38,44 @@ public sealed class PlanRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<List<PlanEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids)
+    {
+        var idList = ids.Distinct().ToList();
+
+        if (idList.Count == 0)
+            return [];
+
+        return await _context.Plans
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .Where(x => idList.Contains(x.Id))
+            .ToListAsync();
+    }
+
+    public async Task<Dictionary<Guid, PlanEntity>> GetByDeliveryReferenceIdsAsync(
+        IEnumerable<Guid> deliveryReferenceIds)
+    {
+        var deliveryIdList = deliveryReferenceIds.Distinct().ToList();
+
+        if (deliveryIdList.Count == 0)
+            return [];
+
+        return await _context.Deliveries
+            .AsNoTracking()
+            .Where(d => deliveryIdList.Contains(d.Id))
+            .Join(
+                _context.Plans.AsNoTracking().Include(p => p.Items),
+                delivery => delivery.PlanId,
+                plan => plan.Id,
+                (delivery, plan) => new
+                {
+                    DeliveryId = delivery.Id,
+                    Plan = plan
+                })
+            .ToDictionaryAsync(x => x.DeliveryId, x => x.Plan);
+    }
+
     public async Task<List<PlanEntity>> GetByCustomerIdAsync(
         Guid customerId)
     {

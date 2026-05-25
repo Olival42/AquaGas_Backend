@@ -26,6 +26,20 @@ public class SaleRepository : ISaleRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<IEnumerable<SaleEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids)
+    {
+        var idList = ids.Distinct().ToList();
+
+        if (idList.Count == 0)
+            return [];
+
+        return await _context.Sales
+            .AsNoTracking()
+            .Where(x => idList.Contains(x.Id))
+            .ToListAsync();
+    }
+
     public async Task AddAsync(SaleEntity sale)
     {
         await _context.Sales.AddAsync(sale);

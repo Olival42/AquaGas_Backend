@@ -40,6 +40,21 @@ public sealed class BillingRepository
             .ToListAsync();
     }
 
+    public async Task<List<Billing>> GetByPlanIdsAsync(
+        IEnumerable<Guid> planIds)
+    {
+        var planIdList = planIds.Distinct().ToList();
+
+        if (planIdList.Count == 0)
+            return [];
+
+        return await _context.Billings
+            .AsNoTracking()
+            .Where(x => planIdList.Contains(x.PlanId))
+            .OrderBy(x => x.DueDate)
+            .ToListAsync();
+    }
+
     public async Task<List<Billing>> GetPendingAsync()
     {
         return await _context.Billings

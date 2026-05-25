@@ -23,6 +23,24 @@ public class CustomerRepository : ICustomerRepository
                 (!onlyActive || c.IsActive));
     }
 
+    public async Task<IEnumerable<CustomerEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids,
+        bool onlyActive = true)
+    {
+        var idList = ids.Distinct().ToList();
+
+        if (idList.Count == 0)
+            return [];
+
+        return await _context.Customers
+            .AsNoTracking()
+            .Include(c => c.Addresses)
+            .Where(c =>
+                idList.Contains(c.Id) &&
+                (!onlyActive || c.IsActive))
+            .ToListAsync();
+    }
+
     public async Task<CustomerEntity?> GetByDocumentAsync(string document)
     {
         return await _context.Customers

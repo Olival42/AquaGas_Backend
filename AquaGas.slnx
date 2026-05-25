@@ -33,6 +33,10 @@
     <Project Path="src/Product/AquaGas.Product.Infrastructure/AquaGas.Product.Infrastructure.csproj" />
     <Project Path="src/Product/AquaGas.Product.Web/AquaGas.Product.Web.csproj" />
   </Folder>
+  <Folder Name="/src/Report/">
+    <Project Path="src/Report/AquaGas.Report.Application/AquaGas.Report.Application.csproj" />
+    <Project Path="src/Report/AquaGas.Report.Web/AquaGas.Report.Web.csproj" />
+  </Folder>
   <Folder Name="/src/Sale/">
     <Project Path="src/Sale/AquaGas.Sale.Application/AquaGas.Sale.Application.csproj" />
     <Project Path="src/Sale/AquaGas.Sale.Domain/AquaGas.Sale.Domain.csproj" />
@@ -61,6 +65,9 @@
   <Folder Name="/tests/AquaGas.UnitTests/Product/">
     <Project Path="tests/AquaGas.UnitTests/Product/AquaGas.Product.Application.Tests/AquaGas.Product.Application.Tests.csproj" />
     <Project Path="tests/AquaGas.UnitTests/Product/AquaGas.Product.Domain.Tests/AquaGas.Product.Domain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/AquaGas.UnitTests/Report/">
+    <Project Path="tests/AquaGas.UnitTests/Report/AquaGas.Report.Application.Tests/AquaGas.Report.Application.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/AquaGas.UnitTests/Shared/">
     <Project Path="tests/AquaGas.UnitTests/Shared/AquaGas.Shared.Tests/AquaGas.Shared.Tests.csproj" />

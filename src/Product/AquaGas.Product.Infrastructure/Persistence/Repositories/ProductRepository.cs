@@ -23,6 +23,23 @@ public class ProductRepository : IProductRepository
                 && (!onlyActive || e.IsActive));
     }
 
+    public async Task<IEnumerable<ProductEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids,
+        bool onlyActive = true)
+    {
+        var idList = ids.Distinct().ToList();
+
+        if (idList.Count == 0)
+            return [];
+
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p =>
+                idList.Contains(p.Id) &&
+                (!onlyActive || p.IsActive))
+            .ToListAsync();
+    }
+
     public async Task<ProductEntity?> GetByNameAsync(string name)
     {
         var normalized = StringNormalizer.Normalize(name);

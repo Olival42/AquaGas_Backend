@@ -12,6 +12,8 @@ public interface IBillingRepository
 
     Task<List<Billing>> GetByPlanIdAsync(Guid planId);
 
+    Task<List<Billing>> GetByPlanIdsAsync(IEnumerable<Guid> planIds);
+
     Task<List<Billing>> GetPendingAsync();
 
     Task<List<Billing>> GetLateAsync();

@@ -24,6 +24,40 @@ public class EmployeeRepository : IEmployeeRepository
                 (!onlyActive || e.IsActive));
     }
 
+    public async Task<IEnumerable<EmployeeEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids,
+        bool onlyActive = true)
+    {
+        var idList = ids.Distinct().ToList();
+
+        if (idList.Count == 0)
+            return [];
+
+        return await _context.Employees
+            .AsNoTracking()
+            .Where(e =>
+                idList.Contains(e.Id) &&
+                (!onlyActive || e.IsActive))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<EmployeeEntity>> GetByUserIdsAsync(
+        IEnumerable<Guid> userIds,
+        bool onlyActive = true)
+    {
+        var userIdList = userIds.Distinct().ToList();
+
+        if (userIdList.Count == 0)
+            return [];
+
+        return await _context.Employees
+            .AsNoTracking()
+            .Where(e =>
+                userIdList.Contains(e.UserId) &&
+                (!onlyActive || e.IsActive))
+            .ToListAsync();
+    }
+
     public async Task<EmployeeEntity?> GetByUserIdAsync(Guid id)
     {
         return await _context.Employees

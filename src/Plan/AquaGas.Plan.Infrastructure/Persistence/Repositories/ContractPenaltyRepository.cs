@@ -1,5 +1,6 @@
 using AquaGas.Plan.Domain.Models;
 using AquaGas.Plan.Domain.Repositories;
+using AquaGas.Plan.Domain.Enums;
 using AquaGas.Plan.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,6 +57,36 @@ public sealed class ContractPenaltyRepository
             .Where(x => x.plan.CustomerId == customerId)
             .Select(x => x.penalty)
             .OrderByDescending(x => x.Timestamp)
+            .ToListAsync();
+    }
+
+    public async Task<List<ContractPenalty>> GetReportAsync(
+        DateTime? start,
+        DateTime? end)
+    {
+        var query =
+            _context.ContractPenalties
+                .AsNoTracking()
+                .Join(
+                    _context.Plans.AsNoTracking(),
+                    penalty => penalty.PlanId,
+                    plan => plan.Id,
+                    (penalty, plan) => new
+                    {
+                        Penalty = penalty,
+                        Plan = plan
+                    })
+                .AsQueryable();
+
+        if (start.HasValue)
+            query = query.Where(x => x.Penalty.Timestamp >= start.Value);
+
+        if (end.HasValue)
+            query = query.Where(x => x.Penalty.Timestamp <= end.Value);
+
+        return await query
+            .OrderByDescending(x => x.Penalty.Timestamp)
+            .Select(x => x.Penalty)
             .ToListAsync();
     }
 

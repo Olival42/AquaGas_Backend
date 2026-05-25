@@ -25,6 +25,7 @@ using AquaGas.Product.Web.DependencyInjection;
 using AquaGas.Auth.Web.DependencyInjection;
 using AquaGas.Sale.Web.DependencyInjection;
 using AquaGas.Plan.Web.DependencyInjection;
+using AquaGas.Report.Web.DependencyInjection;
 using AquaGas.Employee.Infrastructure.Persistence;
 using AquaGas.Customer.Infrastructure.Persistence;
 using AquaGas.Product.Infrastructure.Persistence;
@@ -90,6 +91,7 @@ builder.Services.AddCustomerModule(builder.Configuration);
 builder.Services.AddProductModule(builder.Configuration);
 builder.Services.AddSaleModule(builder.Configuration);
 builder.Services.AddPlanModule(builder.Configuration);
+builder.Services.AddReportModule(builder.Configuration);
 
 builder.Services.AddFluentValidationAutoValidation();
 

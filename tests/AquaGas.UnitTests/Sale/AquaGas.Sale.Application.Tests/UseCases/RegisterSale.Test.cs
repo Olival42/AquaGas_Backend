@@ -514,6 +514,10 @@ public class RegisterSaleTests
         Assert.Equal(
             currentUserId,
             capturedMovement.CreatedBy);
+
+        Assert.Equal(
+            result.Value!.Id,
+            capturedMovement.ReferenceId);
     }
 
     [Fact]

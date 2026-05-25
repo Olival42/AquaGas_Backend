@@ -5,6 +5,12 @@ namespace AquaGas.Employee.Domain.Repositories;
 public interface IEmployeeRepository
 {
     Task<EmployeeEntity?> GetByIdAsync(Guid id, bool onlyActive = true);
+    Task<IEnumerable<EmployeeEntity>> GetByIdsAsync(
+        IEnumerable<Guid> ids,
+        bool onlyActive = true);
+    Task<IEnumerable<EmployeeEntity>> GetByUserIdsAsync(
+        IEnumerable<Guid> userIds,
+        bool onlyActive = true);
     Task AddAsync(EmployeeEntity employee);
     Task<EmployeeEntity?> GetByCPFAsync(string cpf);
     Task<bool> AnyByCPFAsync(string cpf, bool onlyActive = true);
