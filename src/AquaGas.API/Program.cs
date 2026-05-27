@@ -7,6 +7,7 @@ using AquaGas.Customer.Application.Mappings;
 using AquaGas.Employee.Application.Mappings;
 using AquaGas.Product.Application.Mappings;
 using AquaGas.Shared.Filters;
+using AquaGas.Shared.OpenApi;
 using AquaGas.Shared.Infrastructure.DependencyInjection;
 using AquaGas.Shared.Middlewares;
 using AquaGas.Shared.Security;
@@ -54,7 +55,7 @@ builder.Services
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddAquaGasSwagger();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 {
@@ -107,9 +108,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-
-    app.UseSwaggerUI();
+    app.UseAquaGasSwagger();
 }
 
 if (!app.Environment.IsEnvironment("Testing"))

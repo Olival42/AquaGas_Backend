@@ -1,5 +1,6 @@
 ﻿using AquaGas.Auth.Web.DependencyInjection;
 using AquaGas.Shared.Infrastructure.DependencyInjection;
+using AquaGas.Shared.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,7 @@ builder.Services.AddControllers();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAquaGasSwagger();
 
 // Shared (sempre primeiro)
 builder.Services.AddSharedServices();
@@ -21,8 +22,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseAquaGasSwagger();
 }
 
 app.UseHttpsRedirection();
