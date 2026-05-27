@@ -8,12 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AquaGas.Plan.Application\AquaGas.Plan.Application.csproj" />
     <ProjectReference Include="..\AquaGas.Plan.Infrastructure\AquaGas.Plan.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

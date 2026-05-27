@@ -7,9 +7,15 @@ using AquaGas.Auth.Application.Dtos.Requests;
 using AquaGas.Shared.Responses;
 using AquaGas.Auth.Application.Dtos.Responses;
 using AquaGas.Shared.Http;
+using AquaGas.Shared.OpenApi;
 
+/// <summary>
+/// Endpoints de autenticação, renovação de token e encerramento de sessão.
+/// </summary>
 [ApiController]
 [Route("api/auth")]
+[Produces("application/json")]
+[Tags(ApiDocumentation.Tags.Auth)]
 public class AuthController : ControllerBase
 {
     private readonly ILogin _loginUseCase;
@@ -23,8 +29,22 @@ public class AuthController : ControllerBase
         _refreshUseCase = refreshUseCase;
     }
 
+    /// <summary>
+    /// Realiza login do usuário.
+    /// </summary>
+    /// <remarks>
+    /// Valida credenciais e retorna o access token JWT.
+    /// O refresh token é gravado automaticamente em cookie HttpOnly (`refreshToken`).
+    /// </remarks>
+    /// <param name="request">Credenciais de acesso (usuário e senha).</param>
+    /// <response code="200">Login realizado com sucesso.</response>
+    /// <response code="400">Credenciais inválidas ou falha de validação.</response>
+    /// <response code="401">Usuário ou senha incorretos.</response>
     [AllowAnonymous]
     [HttpPost("login")]
+    [ProducesResponseType(typeof(ApiResponse<LoginResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginInput request)
     {
         var result = await _loginUseCase.Execute(request);
@@ -51,8 +71,16 @@ public class AuthController : ControllerBase
         )));
     }
 
+    /// <summary>
+    /// Encerra a sessão do usuário.
+    /// </summary>
+    /// <remarks>
+    /// Invalida o refresh token (cookie) e o access token informado no header Authorization, quando presente.
+    /// </remarks>
+    /// <response code="204">Logout concluído com sucesso.</response>
     [AllowAnonymous]
     [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Logout()
     {
         var refreshToken = Request.Cookies["refreshToken"];
@@ -74,8 +102,19 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Renova o access token JWT.
+    /// </summary>
+    /// <remarks>
+    /// Utiliza o refresh token armazenado no cookie HttpOnly (`refreshToken`) e retorna um novo access token.
+    /// </remarks>
+    /// <response code="200">Token renovado com sucesso.</response>
+    /// <response code="401">Refresh token ausente, inválido ou expirado.</response>
     [AllowAnonymous]
     [HttpPost("refresh")]
+    [ProducesResponseType(typeof(ApiResponse<RefreshResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Refresh()
     {
         var refreshToken = Request.Cookies["refreshToken"];

@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AquaGas.Product.Domain\AquaGas.Product.Domain.csproj" />
     <ProjectReference Include="..\..\Auth\AquaGas.Auth.Application\AquaGas.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>
