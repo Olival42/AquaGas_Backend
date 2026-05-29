@@ -45,5 +45,7 @@ public static class ApiDocumentation
             "Conflito de regra de negócio (código CONFLICT ou INSUFFICIENT_STOCK).";
         public const string InternalErrorDescription =
             "Erro interno não tratado (código INTERNAL_ERROR).";
+        public const string TooManyRequestsDescription =
+            "Limite de requisições excedido (código TOO_MANY_REQUESTS). Aguarde o tempo indicado no header Retry-After antes de tentar novamente.";
     }
 }

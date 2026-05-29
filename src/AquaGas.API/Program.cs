@@ -34,6 +34,8 @@ using AquaGas.Sale.Infrastructure.Persistence;
 using AquaGas.Shared.Infrastructure.Persistence;
 using AquaGas.Plan.Infrastructure.Persistence;
 
+using Shared.Infrastructure.RateLimit;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -104,6 +106,8 @@ ProductMapping.Register();
 builder.Services.Configure<Argon2Options>(
     builder.Configuration.GetSection("Security:Argon2"));
 
+builder.Services.AddRateLimiter(options => options.RegisterRateLimits());
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -153,11 +157,15 @@ if (!app.Environment.IsEnvironment("Testing"))
         hasher);
 }
 
+
+app.UseForwardedHeaders();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseAuthentication();
 
 app.UseMiddleware<TokenBlacklistMiddleware>();
+
+app.UseRateLimiter();
 
 app.UseAuthorization();
 

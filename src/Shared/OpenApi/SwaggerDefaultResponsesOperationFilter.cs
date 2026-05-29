@@ -9,7 +9,7 @@ namespace AquaGas.Shared.OpenApi;
 
 /// <summary>
 /// Complementa respostas HTTP e força o schema de erro padronizado para códigos >= 400.
-/// Adiciona 500 automaticamente para todos os endpoints.
+/// Adiciona 429 e 500 automaticamente para todos os endpoints.
 /// </summary>
 public sealed class SwaggerDefaultResponsesOperationFilter : IOperationFilter
 {
@@ -45,6 +45,7 @@ public sealed class SwaggerDefaultResponsesOperationFilter : IOperationFilter
             AddResponseIfMissing(operation, "403", ApiDocumentation.Responses.ForbiddenDescription);
         }
 
+        AddResponseIfMissing(operation, "429", ApiDocumentation.Responses.TooManyRequestsDescription);
         AddResponseIfMissing(operation, "500", ApiDocumentation.Responses.InternalErrorDescription);
 
         var errorSchema = context.SchemaGenerator.GenerateSchema(typeof(ApiResponse<object>), context.SchemaRepository);
@@ -84,6 +85,19 @@ public sealed class SwaggerDefaultResponsesOperationFilter : IOperationFilter
                             }
                         }
 
+                        if (statusCode == StatusCodes.Status429TooManyRequests)
+                        {
+                            newResponse.Headers["Retry-After"] = new OpenApiHeader
+                            {
+                                Description = "Segundos até que uma nova tentativa seja permitida.",
+                                Schema = new OpenApiSchema
+                                {
+                                    Type = JsonSchemaType.Integer,
+                                    Example = 60
+                                }
+                            };
+                        }
+
                         newResponse.Content["application/json"] = new OpenApiMediaType
                         {
                             Schema = errorSchema,
@@ -119,6 +133,7 @@ public sealed class SwaggerDefaultResponsesOperationFilter : IOperationFilter
             403 => ("FORBIDDEN", "Forbidden access"),
             404 => ("NOT_FOUND", "Resource not found"),
             409 => ("CONFLICT", "Business rule conflict"),
+            429 => ("TOO_MANY_REQUESTS", "Rate limit exceeded."),
             _ => ("INTERNAL_ERROR", "Something went wrong")
         };
     }
