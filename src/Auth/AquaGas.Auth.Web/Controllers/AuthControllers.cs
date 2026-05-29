@@ -8,6 +8,7 @@ using AquaGas.Shared.Responses;
 using AquaGas.Auth.Application.Dtos.Responses;
 using AquaGas.Shared.Http;
 using AquaGas.Shared.OpenApi;
+using Microsoft.AspNetCore.RateLimiting;
 
 /// <summary>
 /// Endpoints de autenticação, renovação de token e encerramento de sessão.
@@ -42,6 +43,7 @@ public class AuthController : ControllerBase
     /// <response code="401">Usuário ou senha incorretos.</response>
     [AllowAnonymous]
     [HttpPost("login")]
+    [EnableRateLimiting("Auth")]
     [ProducesResponseType(typeof(ApiResponse<LoginResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
