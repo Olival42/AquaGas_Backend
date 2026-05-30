@@ -46,16 +46,13 @@ public sealed class RescheduleDelivery : IRescheduleDelivery
         if (delivery.Status != DeliveryStatus.Canceled)
             return Result<RescheduleDeliveryResponse>.Fail(Error.Conflict("Only canceled deliveries can be rescheduled"));
 
-        if (input.NewDate.Date < delivery.DueDate.Date)
-            return Result<RescheduleDeliveryResponse>.Fail(
-                Error.Conflict(
-                    "The new delivery date cannot be earlier than the original date"));
-
+        // A nova data pode ser antecipada sem limite (desde que no futuro — validado no input).
+        // O teto de 7 dias permanece apenas para adiamentos (diferença positiva).
         var diff = (input.NewDate.Date - delivery.DueDate.Date).Days;
         if (diff > 7)
             return Result<RescheduleDeliveryResponse>.Fail(
                 Error.Conflict(
-                    $"The new date must be within 7 days of the original expected date ({delivery.DueDate:dd/MM/yyyy})."));
+                    $"The new date cannot be postponed more than 7 days beyond the original expected date ({delivery.DueDate:dd/MM/yyyy})."));
 
         var userIdResult = _userContext.GetUserId();
         var userNameResult = _userContext.GetUserName();
