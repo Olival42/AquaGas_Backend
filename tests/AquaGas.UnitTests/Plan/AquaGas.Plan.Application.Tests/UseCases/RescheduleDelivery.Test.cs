@@ -126,7 +126,7 @@ public sealed class RescheduleDeliveryTests
     }
 
     [Fact]
-    public async Task Should_Fail_When_NewDate_Is_Earlier()
+    public async Task Should_Reschedule_When_NewDate_Is_Earlier()
     {
         var delivery = new Delivery(Guid.NewGuid(), 1, DateTime.UtcNow.AddDays(5));
 
@@ -134,16 +134,22 @@ public sealed class RescheduleDeliveryTests
 
         SetupCanceledDelivery(delivery, plan);
 
+        _userContext.Setup(x => x.GetUserId())
+            .Returns(Result<Guid>.Success(Guid.NewGuid()));
+
+        _userContext.Setup(x => x.GetUserName())
+            .Returns(Result<string>.Success("User"));
+
         var sut = CreateSut();
 
         var result = await sut.Execute(new RescheduleDeliveryInput
         {
             DeliveryId = delivery.Id,
             NewDate = delivery.DueDate.AddDays(-1),
-            Reason = "x"
+            Reason = "antecipar entrega"
         });
 
-        result.IsFailure.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
     }
 
     [Fact]

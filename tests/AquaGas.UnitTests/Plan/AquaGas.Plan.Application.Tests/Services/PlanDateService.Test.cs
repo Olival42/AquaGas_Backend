@@ -234,13 +234,13 @@ public sealed class PlanDateServiceTests
     [Fact]
     public void Should_Generate_StartDate_In_Next_Month_When_Current_Month_Is_Invalid()
     {
-        var nearEndOfMonth = DateTime.UtcNow;
+        var nearEndOfMonth = DateTime.UtcNow.Date;
 
         var result = _service.GenerateStartDate(
             1,
             2);
 
-        result.Should().BeAfter(
+        result.Date.Should().BeAfter(
             nearEndOfMonth.AddDays(2));
     }
 }
