@@ -381,6 +381,7 @@ public sealed class CustomerConsumptionHistoryTests
             new DateTime(2026, 05, 20, 0, 0, 0, DateTimeKind.Utc));
 
         delivery.Complete();
+        SetDeliveryDate(delivery, new DateTime(2026, 05, 20, 0, 0, 0, DateTimeKind.Utc));
 
         MockBaseData(customer, sale, plan, delivery);
 
@@ -561,7 +562,15 @@ public sealed class CustomerConsumptionHistoryTests
     {
         var delivery = new Delivery(planId, 1, deliveryDate.AddDays(-2));
         delivery.Complete();
+        SetDeliveryDate(delivery, deliveryDate);
         return delivery;
+    }
+
+    private static void SetDeliveryDate(Delivery delivery, DateTime deliveryDate)
+    {
+        typeof(Delivery)
+            .GetProperty(nameof(Delivery.DeliveryDate))!
+            .SetValue(delivery, deliveryDate);
     }
 
     private static Delivery CreatePendingDelivery(Guid planId, DateTime dueDate)
