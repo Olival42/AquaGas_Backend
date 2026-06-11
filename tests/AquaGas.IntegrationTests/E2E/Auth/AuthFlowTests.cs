@@ -8,7 +8,7 @@ using FluentAssertions;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace AquaGas.IntegrationTests.E2E;
+namespace AquaGas.IntegrationTests.E2E.Auth;
 
 [Collection("Integration")]
 public class AuthFlowTests
@@ -30,7 +30,6 @@ public class AuthFlowTests
     {
         var client = _factory.CreateClient();
 
-        // 1. Login
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
             UserName = "gerente123",
@@ -42,14 +41,12 @@ public class AuthFlowTests
         var accessToken = loginJson.GetProperty("data").GetProperty("accessToken").GetString()!;
         accessToken.Should().NotBeNullOrEmpty();
 
-        // 2. Use token to access protected endpoint
         client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
         var protectedResponse = await client.GetAsync("/api/employees");
         protectedResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // 3. Refresh token
         var refreshResponse = await client.PostAsync("/api/auth/refresh", null);
         refreshResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -57,14 +54,12 @@ public class AuthFlowTests
         var newAccessToken = refreshJson.GetProperty("data").GetProperty("accessToken").GetString()!;
         newAccessToken.Should().NotBeNullOrEmpty();
 
-        // 4. Use new token
         client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newAccessToken);
 
         var protectedResponse2 = await client.GetAsync("/api/products");
         protectedResponse2.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // 5. Logout
         var logoutResponse = await client.PostAsync("/api/auth/logout", null);
         logoutResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
