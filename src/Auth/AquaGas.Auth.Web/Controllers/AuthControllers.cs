@@ -2,6 +2,8 @@ namespace AquaGas.Api.Modules.Auth.Web.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using AquaGas.Auth.Application.UseCase;
 using AquaGas.Auth.Application.Dtos.Requests;
 using AquaGas.Shared.Responses;
@@ -22,12 +24,14 @@ public class AuthController : ControllerBase
     private readonly ILogin _loginUseCase;
     private readonly ILogout _logoutUseCase;
     private readonly IRefresh _refreshUseCase;
+    private readonly IWebHostEnvironment _env;
 
-    public AuthController(ILogin loginUseCase, ILogout logoutUseCase, IRefresh refreshUseCase)
+    public AuthController(ILogin loginUseCase, ILogout logoutUseCase, IRefresh refreshUseCase, IWebHostEnvironment env)
     {
         _loginUseCase = loginUseCase;
         _logoutUseCase = logoutUseCase;
         _refreshUseCase = refreshUseCase;
+        _env = env;
     }
 
     /// <summary>
@@ -94,11 +98,13 @@ public class AuthController : ControllerBase
 
         await _logoutUseCase.Execute(refreshToken ?? "", accessToken ?? "");
 
+        var isTestingOrDevelopment = _env.IsDevelopment() || _env.IsEnvironment("Testing");
+
         Response.Cookies.Delete("refreshToken", new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict
+            Secure = !isTestingOrDevelopment,
+            SameSite = isTestingOrDevelopment ? SameSiteMode.Lax : SameSiteMode.Strict
         });
 
         return NoContent();
@@ -149,14 +155,16 @@ public class AuthController : ControllerBase
 
     private void SetRefreshCookie(string token, DateTime expiresAt)
     {
+        var isTestingOrDevelopment = _env.IsDevelopment() || _env.IsEnvironment("Testing");
+
         Response.Cookies.Append(
             "refreshToken",
             token,
             new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = !isTestingOrDevelopment,
+                SameSite = isTestingOrDevelopment ? SameSiteMode.Lax : SameSiteMode.Strict,
                 Expires = expiresAt,
             }
         );

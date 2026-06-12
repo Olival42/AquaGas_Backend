@@ -106,7 +106,10 @@ ProductMapping.Register();
 builder.Services.Configure<Argon2Options>(
     builder.Configuration.GetSection("Security:Argon2"));
 
-builder.Services.AddRateLimiter(options => options.RegisterRateLimits());
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddRateLimiter(options => options.RegisterRateLimits());
+}
 
 var app = builder.Build();
 
@@ -165,7 +168,10 @@ app.UseAuthentication();
 
 app.UseMiddleware<TokenBlacklistMiddleware>();
 
-app.UseRateLimiter();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.UseRateLimiter();
+}
 
 app.UseAuthorization();
 

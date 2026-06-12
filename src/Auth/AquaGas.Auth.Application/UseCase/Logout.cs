@@ -4,6 +4,7 @@ using AquaGas.Shared.Domain.Enums;
 using AquaGas.Shared.Errors;
 using AquaGas.Shared.Infrastructure.TokenBlacklist;
 using AquaGas.Shared.Results;
+using Microsoft.Extensions.Logging;
 
 namespace AquaGas.Auth.Application.UseCase;
 
@@ -13,18 +14,21 @@ public class Logout : ILogout
     private readonly ITokenBlacklistService _tokenBlacklistService;
     private readonly IJwtService _jwtService;
     private readonly IAuditLogService _audit;
+    private readonly ILogger<Logout> _logger;
 
     public Logout(
             IRefreshTokenService refreshTokenService,
             ITokenBlacklistService tokenBlacklistService,
             IJwtService jwtService,
-            IAuditLogService audit
+            IAuditLogService audit,
+            ILogger<Logout> logger
         )
     {
         _refreshTokenService = refreshTokenService;
         _tokenBlacklistService = tokenBlacklistService;
         _jwtService = jwtService;
         _audit = audit;
+        _logger = logger;
     }
 
     public async Task<Result> Execute(string refreshToken, string accessToken)
@@ -65,13 +69,24 @@ public class Logout : ILogout
 
         if (userId.HasValue)
         {
-            await _audit.LogAsync(
-                userId,
-                null,
-                AuditAction.LOGOUT,
-                "User",
-                userId
-            );
+            try
+            {
+                await _audit.LogAsync(
+                    userId,
+                    null,
+                    AuditAction.LOGOUT,
+                    "User",
+                    userId
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "Failed to write audit log for user {UserId}",
+                    userId
+                );
+            }
         }
 
         return Result.Success();
