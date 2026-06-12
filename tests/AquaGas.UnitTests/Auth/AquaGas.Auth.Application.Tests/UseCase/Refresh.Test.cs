@@ -9,6 +9,7 @@ using AquaGas.Shared.Domain.Enums;
 using AquaGas.Auth.Application.Dtos.Responses;
 using AquaGas.Application.Services;
 using AquaGas.Auth.Domain.Repositories;
+using Microsoft.Extensions.Logging;
 
 public class RefreshUseCaseTests
 {
@@ -16,13 +17,15 @@ public class RefreshUseCaseTests
     private readonly Mock<IRefreshTokenService> _refreshMock = new();
     private readonly Mock<IUserRepository> _userMock = new();
     private readonly Mock<IAuditLogService> _auditMock = new();
+    private readonly Mock<ILogger<Refresh>> _logger = new();
 
     private Refresh CreateUseCase()
         => new Refresh(
             _jwtMock.Object,
             _refreshMock.Object,
             _userMock.Object,
-            _auditMock.Object
+            _auditMock.Object,
+            _logger.Object
         );
 
     private User CreateUser()

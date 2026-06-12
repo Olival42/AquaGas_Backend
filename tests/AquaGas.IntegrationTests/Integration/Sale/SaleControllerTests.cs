@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Sale;
 
 [Collection("Integration")]
-public class SaleControllerTests
+public class SaleControllerTests : IntegrationTestBase
 {
     private readonly CustomWebApplicationFactory _factory;
 
@@ -18,7 +18,7 @@ public class SaleControllerTests
         PropertyNameCaseInsensitive = true
     };
 
-    public SaleControllerTests(CustomWebApplicationFactory factory)
+    public SaleControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
         _factory = factory;
     }

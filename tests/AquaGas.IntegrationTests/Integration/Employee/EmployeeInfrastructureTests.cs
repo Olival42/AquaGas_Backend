@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Employee;
 
 [Collection("Integration")]
-public class EmployeeInfrastructureTests
+public class EmployeeInfrastructureTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public EmployeeInfrastructureTests(CustomWebApplicationFactory factory)
+    public EmployeeInfrastructureTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task DuplicateCpf_ReturnsConflict()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -34,7 +31,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Primeiro CPF Emp",
-                Cpf = "14725836900",
+                Cpf = "52998224725",
                 Email = "infra.emp.first@empresa.com",
                 Phone = "11988886001"
             }
@@ -46,7 +43,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Segundo CPF Emp",
-                Cpf = "14725836900",
+                Cpf = "52998224725",
                 Email = "infra.emp.second@empresa.com",
                 Phone = "11988886002"
             }
@@ -58,7 +55,7 @@ public class EmployeeInfrastructureTests
     [Fact]
     public async Task DuplicateUserName_ReturnsConflict()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -66,7 +63,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Primeiro User",
-                Cpf = "95173684021",
+                Cpf = "71461516030",
                 Email = "infra.usr.first@empresa.com",
                 Phone = "11988886003"
             }
@@ -78,7 +75,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Segundo User",
-                Cpf = "36925814752",
+                Cpf = "98765432100",
                 Email = "infra.usr.second@empresa.com",
                 Phone = "11988886004"
             }
@@ -90,7 +87,7 @@ public class EmployeeInfrastructureTests
     [Fact]
     public async Task DeactivatedEmployee_NotReturnedInGetById()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -98,7 +95,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Deactivated Emp",
-                Cpf = "74185296300",
+                Cpf = "05244777017",
                 Email = "infra.deac@empresa.com",
                 Phone = "11988886005"
             }
@@ -116,7 +113,7 @@ public class EmployeeInfrastructureTests
     [Fact]
     public async Task RegisterEmployee_CreatesUserAndEmployee_Linked()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -124,7 +121,7 @@ public class EmployeeInfrastructureTests
             Employee = new
             {
                 Name = "Linked Emp",
-                Cpf = "85296374100",
+                Cpf = "79522375004",
                 Email = "infra.linked@empresa.com",
                 Phone = "11988886006"
             }

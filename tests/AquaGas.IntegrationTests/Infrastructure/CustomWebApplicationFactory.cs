@@ -12,7 +12,9 @@ using AquaGas.Shared.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +25,48 @@ using Testcontainers.PostgreSql;
 using ApiProgram = Api::Program;
 
 namespace AquaGas.IntegrationTests.Infrastructure;
+
+// Startup filter to add cookie modification middleware
+public class TestCookieStartupFilter : IStartupFilter
+{
+    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+    {
+        return app =>
+        {
+            // Add our middleware first to modify cookies
+            app.Use(async (context, nextMiddleware) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    if (context.Response.Headers.ContainsKey("Set-Cookie"))
+                    {
+                        var originalCookies = context.Response.Headers["Set-Cookie"].ToList();
+                        var modifiedCookies = new List<string>();
+                        
+                        foreach (var cookie in originalCookies)
+                        {
+                            // Remove Secure flag and adjust SameSite
+                            var modifiedCookie = cookie
+                                .Replace("; Secure", "")
+                                .Replace("Secure; ", "")
+                                .Replace("SameSite=Strict", "SameSite=Lax");
+                            modifiedCookies.Add(modifiedCookie);
+                        }
+                        
+                        context.Response.Headers["Set-Cookie"] = modifiedCookies.ToArray();
+                    }
+                    
+                    return Task.CompletedTask;
+                });
+                
+                await nextMiddleware(context);
+            });
+            
+            // Run the rest of the app pipeline
+            next(app);
+        };
+    }
+}
 
 public class CustomWebApplicationFactory : WebApplicationFactory<ApiProgram>, IAsyncLifetime
 {
@@ -62,6 +106,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<ApiProgram>, IA
                 ["Security:Argon2:Lanes"] = "4"
             });
         });
+        
+        builder.ConfigureServices(services =>
+        {
+            services.AddTransient<IStartupFilter, TestCookieStartupFilter>();
+        });
     }
 
     public async Task InitializeAsync()
@@ -88,6 +137,34 @@ public class CustomWebApplicationFactory : WebApplicationFactory<ApiProgram>, IA
         await planDb.Database.MigrateAsync();
         await appDb.Database.MigrateAsync();
 
+        var hasher = sp.GetRequiredService<IPasswordHasher>();
+        await DbSeeder.SeedAsync(authDb, employeeDb, hasher);
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        using var scope = Services.CreateScope();
+        var sp = scope.ServiceProvider;
+
+        // Resolve all DbContexts
+        var authDb = sp.GetRequiredService<AuthDbContext>();
+        var employeeDb = sp.GetRequiredService<EmployeeDbContext>();
+        var customerDb = sp.GetRequiredService<CustomerDbContext>();
+        var productDb = sp.GetRequiredService<ProductDbContext>();
+        var saleDb = sp.GetRequiredService<SaleDbContext>();
+        var planDb = sp.GetRequiredService<PlanDbContext>();
+        var appDb = sp.GetRequiredService<AppDbContext>();
+
+        // Remove all data (order matters for foreign keys)
+        await planDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Deliveries\", \"Billings\", \"PlanItems\", \"ContractPenalties\", \"Plans\" RESTART IDENTITY CASCADE;");
+        await saleDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"SaleItems\", \"Sales\" RESTART IDENTITY CASCADE;");
+        await productDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"StockMovements\", \"products\" RESTART IDENTITY CASCADE;");
+        await customerDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Addresses\", \"Customers\" RESTART IDENTITY CASCADE;");
+        await employeeDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Employees\" RESTART IDENTITY CASCADE;");
+        await authDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"RefreshTokens\", \"Users\" RESTART IDENTITY CASCADE;");
+        await appDb.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"AuditLogs\" RESTART IDENTITY CASCADE;");
+
+        // Re-seed the initial data
         var hasher = sp.GetRequiredService<IPasswordHasher>();
         await DbSeeder.SeedAsync(authDb, employeeDb, hasher);
     }

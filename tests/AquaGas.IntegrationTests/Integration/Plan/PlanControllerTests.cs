@@ -9,18 +9,15 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Plan;
 
 [Collection("Integration")]
-public class PlanControllerTests
+public class PlanControllerTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public PlanControllerTests(CustomWebApplicationFactory factory)
+    public PlanControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     private async Task<string> CreateProductAsync(HttpClient client, string name, int qty = 100)
@@ -46,12 +43,12 @@ public class PlanControllerTests
             Name = name,
             Document = cpf,
             Email = email,
-            Phone = "11999990010",
+            Phone = "11999990001",
             Address = new
             {
-                Street = "Rua Plano",
+                Street = "Rua Teste",
                 Neighborhood = "Centro",
-                Number = "1",
+                Number = "100",
                 City = "São Paulo",
                 Cep = "01001000"
             }
@@ -65,10 +62,10 @@ public class PlanControllerTests
     [Fact]
     public async Task Register_WithValidData_ReturnsCreated()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plano Prod 01");
         var customerId = await CreateCustomerAsync(
-            client, "14538220032", "Cliente Plano 01", "plano01@email.com");
+            client, "52998224725", "Cliente Plano 01", "plano01@email.com");
 
         var response = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -92,7 +89,7 @@ public class PlanControllerTests
     [Fact]
     public async Task Register_WhenUnauthenticated_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -112,7 +109,7 @@ public class PlanControllerTests
     [Fact]
     public async Task GetById_NonExisting_ReturnsNotFound()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync($"/api/plans/{Guid.NewGuid()}");
 
@@ -122,7 +119,7 @@ public class PlanControllerTests
     [Fact]
     public async Task GetAll_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync("/api/plans");
 
@@ -135,10 +132,10 @@ public class PlanControllerTests
     [Fact]
     public async Task Register_GetById_ReturnsRegisteredPlan()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plano Prod GetById");
         var customerId = await CreateCustomerAsync(
-            client, "45321798003", "Cliente Plano GetById", "planoget@email.com");
+            client, "71461516030", "Cliente Plano GetById", "planoget@email.com");
 
         var registerResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -168,10 +165,10 @@ public class PlanControllerTests
     [Fact]
     public async Task Suspend_ActivePlan_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plano Prod Suspend");
         var customerId = await CreateCustomerAsync(
-            client, "63529814050", "Cliente Plano Suspend", "planosuspend@email.com");
+            client, "52998224997", "Cliente Plano Suspend", "planosuspend@email.com");
 
         var registerResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -202,10 +199,10 @@ public class PlanControllerTests
     [Fact]
     public async Task Cancel_ActivePlan_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plano Prod Cancel");
         var customerId = await CreateCustomerAsync(
-            client, "81726354099", "Cliente Plano Cancel", "planocancel@email.com");
+            client, "98765432100", "Cliente Plano Cancel", "planocancel@email.com");
 
         var registerResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {

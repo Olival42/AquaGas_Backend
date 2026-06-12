@@ -6,6 +6,7 @@ using AquaGas.Auth.Domain.Models;
 using AquaGas.Shared.Infrastructure.TokenBlacklist;
 using AquaGas.Shared.Domain.Enums;
 using AquaGas.Application.Services;
+using Microsoft.Extensions.Logging;
 
 public class LogoutUseCaseTests
 {
@@ -13,13 +14,15 @@ public class LogoutUseCaseTests
     private readonly Mock<ITokenBlacklistService> _blacklistMock = new();
     private readonly Mock<IJwtService> _jwtMock = new();
     private readonly Mock<IAuditLogService> _auditMock = new();
+    private readonly Mock<ILogger<Logout>> _logger = new();
 
     private Logout CreateUseCase()
         => new Logout(
             _refreshMock.Object,
             _blacklistMock.Object,
             _jwtMock.Object,
-            _auditMock.Object
+            _auditMock.Object,
+            _logger.Object
         );
 
     private Mock<IJwtService> JwtMock(Guid userId)
@@ -71,7 +74,7 @@ public class LogoutUseCaseTests
         var auditMock = new Mock<IAuditLogService>();
         var blacklistMock = new Mock<ITokenBlacklistService>();
 
-        var useCase = new Logout(refreshMock.Object, blacklistMock.Object, jwtMock.Object, auditMock.Object);
+        var useCase = new Logout(refreshMock.Object, blacklistMock.Object, jwtMock.Object, auditMock.Object, _logger.Object);
 
         await useCase.Execute("refresh", "access");
 
@@ -104,7 +107,8 @@ public class LogoutUseCaseTests
         var useCase = new Logout(refreshMock.Object,
             new Mock<ITokenBlacklistService>().Object,
             jwtMock.Object,
-            new Mock<IAuditLogService>().Object
+            new Mock<IAuditLogService>().Object,
+            _logger.Object
         );
 
         var result = await useCase.Execute("refresh", "access");
@@ -192,7 +196,8 @@ public class LogoutUseCaseTests
             _refreshMock.Object,
             _blacklistMock.Object,
             jwtMock.Object,
-            _auditMock.Object
+            _auditMock.Object,
+            _logger.Object
         );
 
         var result = await useCase.Execute("refresh", "bad_token");

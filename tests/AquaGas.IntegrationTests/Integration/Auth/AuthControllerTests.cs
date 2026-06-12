@@ -11,24 +11,21 @@ using Microsoft.AspNetCore.Mvc.Testing;
 namespace AquaGas.IntegrationTests.Integration.Auth;
 
 [Collection("Integration")]
-public class AuthControllerTests
+public class AuthControllerTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public AuthControllerTests(CustomWebApplicationFactory factory)
+    public AuthControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task Login_WithValidCredentials_ReturnsOkWithToken()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -48,7 +45,7 @@ public class AuthControllerTests
     [Fact]
     public async Task Login_WithInvalidPassword_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -62,7 +59,7 @@ public class AuthControllerTests
     [Fact]
     public async Task Login_WithNonExistentUser_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -76,7 +73,7 @@ public class AuthControllerTests
     [Fact]
     public async Task Logout_WhenAuthenticated_ReturnsNoContent()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsync("/api/auth/logout", null);
 
@@ -86,7 +83,7 @@ public class AuthControllerTests
     [Fact]
     public async Task Refresh_WithValidCookie_ReturnsNewToken()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -107,7 +104,7 @@ public class AuthControllerTests
     [Fact]
     public async Task Refresh_WithoutCookie_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient(
+        var client = Factory.CreateClient(
             new WebApplicationFactoryClientOptions { HandleCookies = false });
 
         var response = await client.PostAsync("/api/auth/refresh", null);

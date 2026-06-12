@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Customer;
 
 [Collection("Integration")]
-public class CustomerControllerTests
+public class CustomerControllerTests : IntegrationTestBase
 {
     private readonly CustomWebApplicationFactory _factory;
 
@@ -18,7 +18,7 @@ public class CustomerControllerTests
         PropertyNameCaseInsensitive = true
     };
 
-    public CustomerControllerTests(CustomWebApplicationFactory factory)
+    public CustomerControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
         _factory = factory;
     }
@@ -26,8 +26,8 @@ public class CustomerControllerTests
     [Fact]
     public async Task Register_WithValidData_ReturnsCreated()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
-        var cpf = "11144477735";
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
+        var cpf = "52998224725";
 
         var response = await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -55,12 +55,12 @@ public class CustomerControllerTests
     [Fact]
     public async Task Register_WhenUnauthenticated_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Sem Auth",
-            Document = "76182939097",
+            Document = "52998224806",
             Email = "noauth@email.com",
             Phone = "11999990099",
             Address = new
@@ -79,7 +79,7 @@ public class CustomerControllerTests
     [Fact]
     public async Task GetById_NonExisting_ReturnsNotFound()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync($"/api/customers/{Guid.NewGuid()}");
 
@@ -89,7 +89,7 @@ public class CustomerControllerTests
     [Fact]
     public async Task GetAll_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync("/api/customers");
 
@@ -102,8 +102,8 @@ public class CustomerControllerTests
     [Fact]
     public async Task Register_GetById_ReturnsRegisteredCustomer()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
-        var cpf = "34174066008";
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
+        var cpf = "52998224997";
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -136,8 +136,8 @@ public class CustomerControllerTests
     [Fact]
     public async Task Deactivate_AsManager_ReturnsNoContent()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
-        var cpf = "87395426021";
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
+        var cpf = "05244777017";
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -167,8 +167,8 @@ public class CustomerControllerTests
     [Fact]
     public async Task Update_WithValidData_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
-        var cpf = "60578054040";
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
+        var cpf = "52998225101";
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -202,11 +202,11 @@ public class CustomerControllerTests
     [Fact]
     public async Task ExistsByDocument_WithExistingDocument_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Existe Doc",
-            Document = "08672048040",
+            Document = "98765432100",
             Email = "existedoc@email.com",
             Phone = "11999990005",
             Address = new
@@ -219,7 +219,7 @@ public class CustomerControllerTests
             }
         });
 
-        var response = await client.GetAsync("/api/customers/exists?document=08672048040");
+        var response = await client.GetAsync("/api/customers/exists?document=98765432100");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

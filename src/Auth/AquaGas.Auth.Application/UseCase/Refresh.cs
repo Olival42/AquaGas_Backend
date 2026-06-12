@@ -5,6 +5,7 @@ using AquaGas.Auth.Domain.Repositories;
 using AquaGas.Shared.Domain.Enums;
 using AquaGas.Shared.Errors;
 using AquaGas.Shared.Results;
+using Microsoft.Extensions.Logging;
 
 namespace AquaGas.Auth.Application.UseCase;
 
@@ -14,18 +15,21 @@ public class Refresh : IRefresh
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IUserRepository _userRepository;
     private readonly IAuditLogService _audit;
+    private readonly ILogger<Refresh> _logger;
 
     public Refresh(
             IJwtService jwtService,
             IRefreshTokenService refreshTokenService,
             IUserRepository userRepository,
-            IAuditLogService audit
+            IAuditLogService audit,
+            ILogger<Refresh> logger
         )
     {
         _jwtService = jwtService;
         _userRepository = userRepository;
         _refreshTokenService = refreshTokenService;
         _audit = audit;
+        _logger = logger;
     }
 
     public async Task<Result<RefreshResult>> Execute(string refreshToken)
@@ -62,24 +66,45 @@ public class Refresh : IRefresh
         await _refreshTokenService.UpdateAsync(refreshTokenEntity);
 
         var accessTokenGenerated = _jwtService.GenerateAccessToken(user);
-
         var refreshTokenGenerated = _jwtService.GenerateRefreshToken(user);
 
-        await _refreshTokenService.StoreAsync(
-            user,
-            refreshTokenGenerated.Token,
-            refreshTokenGenerated.ExpiresAt
-        );
+        try
+        {
+            await _refreshTokenService.StoreAsync(
+                user,
+                refreshTokenGenerated.Token,
+                refreshTokenGenerated.ExpiresAt
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to store refresh token for user {UserId}",
+                user.Id
+            );
+        }
 
-        await _audit.LogAsync(
-            user.Id,
-            user.UserName.Value,
-            AuditAction.REFRESH_TOKEN,
-            "User",
-            user.Id,
-            new { oldRefreshToken = refreshToken },
-            new { newRefreshToken = refreshTokenGenerated }
-        );
+        try
+        {
+            await _audit.LogAsync(
+                user.Id,
+                user.UserName.Value,
+                AuditAction.REFRESH_TOKEN,
+                "User",
+                user.Id,
+                new { oldRefreshToken = refreshToken },
+                new { newRefreshToken = refreshTokenGenerated.Token, newRefreshTokenExpiresAt = refreshTokenGenerated.ExpiresAt }
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to write audit log for user {UserId}",
+                user.Id
+            );
+        }
 
         var tokens = new TokenDto(
             accessTokenGenerated.Token,

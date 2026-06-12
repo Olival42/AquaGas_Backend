@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Shared;
 
 [Collection("Integration")]
-public class MiddlewareTests
+public class MiddlewareTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public MiddlewareTests(CustomWebApplicationFactory factory)
+    public MiddlewareTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task TokenBlacklistMiddleware_BlocksRevokedToken()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -52,7 +49,7 @@ public class MiddlewareTests
     [Fact]
     public async Task GlobalExceptionMiddleware_ReturnsJsonErrorEnvelope()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.GetAsync("/api/nonexistent-endpoint-xyz");
 
@@ -62,7 +59,7 @@ public class MiddlewareTests
     [Fact]
     public async Task ResponseEnvelope_SuccessFormat_ContainsExpectedFields()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync("/api/products");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -76,7 +73,7 @@ public class MiddlewareTests
     [Fact]
     public async Task ResponseEnvelope_ErrorFormat_ContainsExpectedFields()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync($"/api/products/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
