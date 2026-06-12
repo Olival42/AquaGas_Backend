@@ -1,0 +1,6 @@
+@AquaGas.Report.Web_HostAddress = http://localhost:5190
+
+GET {{AquaGas.Report.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
