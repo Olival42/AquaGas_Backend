@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Shared;
 
 [Collection("Integration")]
-public class ValidationFilterTests
+public class ValidationFilterTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public ValidationFilterTests(CustomWebApplicationFactory factory)
+    public ValidationFilterTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task Login_WithEmptyBody_ReturnsBadRequest()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/auth/login", new { });
 
@@ -36,7 +33,7 @@ public class ValidationFilterTests
     [Fact]
     public async Task RegisterProduct_WithMissingFields_ReturnsBadRequest()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -52,7 +49,7 @@ public class ValidationFilterTests
     [Fact]
     public async Task RegisterCustomer_WithInvalidEmail_ReturnsBadRequest()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -76,7 +73,7 @@ public class ValidationFilterTests
     [Fact]
     public async Task RegisterEmployee_WithShortPassword_ReturnsBadRequest()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -96,7 +93,7 @@ public class ValidationFilterTests
     [Fact]
     public async Task RegisterSale_WithEmptyItems_ReturnsBadRequest()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/sales/register", new
         {

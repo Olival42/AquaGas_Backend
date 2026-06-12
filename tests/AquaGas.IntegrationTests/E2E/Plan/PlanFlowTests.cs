@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.E2E.Plan;
 
 [Collection("Integration")]
-public class PlanFlowTests
+public class PlanFlowTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public PlanFlowTests(CustomWebApplicationFactory factory)
+    public PlanFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task CompletePlanFlow_Register_Verify_Suspend_Reactivate()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var productResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -42,7 +39,7 @@ public class PlanFlowTests
         var customerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Cliente E2E Plan",
-            Document = "27538461020",
+            Document = "52998225292",
             Email = "e2e.plan@email.com",
             Phone = "11999992000",
             Address = new
@@ -95,19 +92,19 @@ public class PlanFlowTests
     [Fact]
     public async Task PlanCancelFlow_Register_Cancel_VerifyStatus()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var productResponse = await client.PostAsJsonAsync("/api/products/register", new
-        { Name = "Botijão E2E Cancel", Type = "Gas", Price = 80.00m, Quantity = 100 });
+        { Name = "Botijao E2E Cancel", Type = "Gas", Price = 80.00m, Quantity = 100 });
         productResponse.EnsureSuccessStatusCode();
         var productJson = await productResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         var productId = productJson.GetProperty("data").GetProperty("id").GetString()!;
 
         var customerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
-            Name = "Cliente E2E Cancel Plan", Document = "58321746090",
+            Name = "Cliente E2E Cancel Plan", Document = "52998225373",
             Email = "e2e.cancelplan@email.com", Phone = "11999993000",
-            Address = new { Street = "Rua Cancel", Neighborhood = "Centro", Number = "200", City = "São Paulo", Cep = "01001000" }
+            Address = new { Street = "Rua Cancel", Neighborhood = "Centro", Number = "200", City = "Sao Paulo", Cep = "01001000" }
         });
         customerResponse.EnsureSuccessStatusCode();
         var customerJson = await customerResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
@@ -115,7 +112,7 @@ public class PlanFlowTests
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
-            CustomerId = customerId, Cycle = "Monthly", DeliveryDay = 15, BillingDay = 10,
+            CustomerId = customerId, Cycle = "Custom", DeliveryDay = 15, BillingDay = 10,
             DurationInMonths = 12, IgnoreWarnings = true,
             Items = new[] { new { ProductId = productId, Quantity = 1 } }
         });

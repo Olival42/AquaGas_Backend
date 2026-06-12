@@ -9,28 +9,25 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Product;
 
 [Collection("Integration")]
-public class ProductControllerTests
+public class ProductControllerTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public ProductControllerTests(CustomWebApplicationFactory factory)
+    public ProductControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task Register_AsManager_ReturnsCreated()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/products/register", new
         {
-            Name = "Botijão P13 Teste",
+            Name = "Botijao P13 Teste",
             Type = "Gas",
             Price = 89.90m,
             Quantity = 50
@@ -40,14 +37,14 @@ public class ProductControllerTests
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         json.GetProperty("success").GetBoolean().Should().BeTrue();
-        json.GetProperty("data").GetProperty("name").GetString().Should().Be("Botijão P13 Teste");
+        json.GetProperty("data").GetProperty("name").GetString().Should().Be("Botijao P13 Teste");
         json.GetProperty("data").GetProperty("quantity").GetInt32().Should().Be(50);
     }
 
     [Fact]
     public async Task Register_WhenUnauthenticated_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -63,7 +60,7 @@ public class ProductControllerTests
     [Fact]
     public async Task GetById_NonExisting_ReturnsNotFound()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync($"/api/products/{Guid.NewGuid()}");
 
@@ -73,7 +70,7 @@ public class ProductControllerTests
     [Fact]
     public async Task GetAll_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync("/api/products");
 
@@ -86,11 +83,11 @@ public class ProductControllerTests
     [Fact]
     public async Task Register_GetById_ReturnsRegisteredProduct()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
-            Name = "Galão 20L GetById",
+            Name = "Galao 20L GetById",
             Type = "Water",
             Price = 15.00m,
             Quantity = 100
@@ -105,13 +102,13 @@ public class ProductControllerTests
         getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var getJson = await getResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        getJson.GetProperty("data").GetProperty("name").GetString().Should().Be("Galão 20L GetById");
+        getJson.GetProperty("data").GetProperty("name").GetString().Should().Be("Galao 20L GetById");
     }
 
     [Fact]
     public async Task UpdateStock_Entry_IncreasesQuantity()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -129,7 +126,7 @@ public class ProductControllerTests
         {
             StockMovementType = "Entry",
             Quantity = 20,
-            Reason = "Reposição de estoque"
+            Reason = "Reposicao de estoque"
         });
         var stockResponse = await client.PatchAsync($"/api/products/{productId}/stock", stockContent);
 
@@ -142,7 +139,7 @@ public class ProductControllerTests
     [Fact]
     public async Task Deactivate_AsManager_ReturnsNoContent()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -156,6 +153,16 @@ public class ProductControllerTests
         var json = await registerResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         var productId = json.GetProperty("data").GetProperty("id").GetString();
 
+        // First decrease stock to 0
+        var decreaseContent = JsonContent.Create(new
+        {
+            StockMovementType = "Exit",
+            Quantity = 5,
+            Reason = "Decrease to zero for deactivation"
+        });
+        var decreaseResponse = await client.PatchAsync($"/api/products/{productId}/stock", decreaseContent);
+        decreaseResponse.EnsureSuccessStatusCode();
+
         var deleteResponse = await client.DeleteAsync($"/api/products/{productId}");
 
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -164,7 +171,7 @@ public class ProductControllerTests
     [Fact]
     public async Task Update_WithValidData_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {

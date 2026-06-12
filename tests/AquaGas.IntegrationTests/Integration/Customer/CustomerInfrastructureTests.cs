@@ -9,25 +9,22 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Customer;
 
 [Collection("Integration")]
-public class CustomerInfrastructureTests
+public class CustomerInfrastructureTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public CustomerInfrastructureTests(CustomWebApplicationFactory factory)
+    public CustomerInfrastructureTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task DuplicateDocument_ReturnsConflict()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
-        var cpf = "32165498701";
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
+        var cpf = "52998225373";
 
         await client.PostAsJsonAsync("/api/customers/register", new
         {
@@ -67,12 +64,12 @@ public class CustomerInfrastructureTests
     [Fact]
     public async Task DeactivatedCustomer_NotReturnedInGetById()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Desativado Infra",
-            Document = "45698712367",
+            Document = "52998225454",
             Email = "infra.deactivated@email.com",
             Phone = "11999996003",
             Address = new
@@ -97,12 +94,12 @@ public class CustomerInfrastructureTests
     [Fact]
     public async Task UpdateAddress_PersistsCorrectly()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Atualizar Endereco",
-            Document = "78945612355",
+            Document = "52998225535",
             Email = "infra.address@email.com",
             Phone = "11999996004",
             Address = new

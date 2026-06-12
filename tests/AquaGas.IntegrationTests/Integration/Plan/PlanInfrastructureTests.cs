@@ -9,18 +9,15 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Plan;
 
 [Collection("Integration")]
-public class PlanInfrastructureTests
+public class PlanInfrastructureTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public PlanInfrastructureTests(CustomWebApplicationFactory factory)
+    public PlanInfrastructureTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     private async Task<string> CreateProductAsync(HttpClient client, string name)
@@ -39,17 +36,21 @@ public class PlanInfrastructureTests
             Name = $"Cliente Infra {cpf[..5]}",
             Document = cpf,
             Email = email,
-            Phone = "11999997001",
+            Phone = "11999990001",
             Address = new
             {
-                Street = "Rua Infra Plan",
+                Street = "Rua Teste",
                 Neighborhood = "Centro",
-                Number = "1",
+                Number = "100",
                 City = "São Paulo",
                 Cep = "01001000"
             }
         });
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Error creating customer: {response.StatusCode} - {content}");
+        }
         var json = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         return json.GetProperty("data").GetProperty("id").GetString()!;
     }
@@ -57,9 +58,9 @@ public class PlanInfrastructureTests
     [Fact]
     public async Task Plan_GeneratesDeliveries_OnCreation()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plan Deliveries Infra");
-        var customerId = await CreateCustomerAsync(client, "51739284060", "infra.plan.del@email.com");
+        var customerId = await CreateCustomerAsync(client, "52998224725", "infra.plan.del@email.com");
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -80,9 +81,9 @@ public class PlanInfrastructureTests
     [Fact]
     public async Task Plan_GeneratesBillings_OnCreation()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plan Billings Infra");
-        var customerId = await CreateCustomerAsync(client, "62841357020", "infra.plan.bill@email.com");
+        var customerId = await CreateCustomerAsync(client, "71461516030", "infra.plan.bill@email.com");
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -103,9 +104,9 @@ public class PlanInfrastructureTests
     [Fact]
     public async Task Plan_SuspendCancelsDeliveriesAndBillings()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plan Suspend Infra");
-        var customerId = await CreateCustomerAsync(client, "73952148088", "infra.plan.susp@email.com");
+        var customerId = await CreateCustomerAsync(client, "52998224806", "infra.plan.susp@email.com");
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
@@ -133,14 +134,14 @@ public class PlanInfrastructureTests
     [Fact]
     public async Task Plan_WithDuration_CreatesContractPenaltyOnCancel()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plan Penalty Infra");
-        var customerId = await CreateCustomerAsync(client, "84163527091", "infra.plan.pen@email.com");
+        var customerId = await CreateCustomerAsync(client, "05244777017", "infra.plan.pen@email.com");
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {
             CustomerId = customerId,
-            Cycle = "Monthly",
+            Cycle = "Custom",
             DeliveryDay = 25,
             BillingDay = 20,
             DurationInMonths = 12,
@@ -162,9 +163,9 @@ public class PlanInfrastructureTests
     [Fact]
     public async Task Plan_UpgradeIncreasesTotal()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
         var productId = await CreateProductAsync(client, "Plan Upgrade Infra");
-        var customerId = await CreateCustomerAsync(client, "95274183060", "infra.plan.upg@email.com");
+        var customerId = await CreateCustomerAsync(client, "79522375004", "infra.plan.upg@email.com");
 
         var planResponse = await client.PostAsJsonAsync("/api/plans/register", new
         {

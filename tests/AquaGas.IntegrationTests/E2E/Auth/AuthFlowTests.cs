@@ -11,24 +11,21 @@ using Microsoft.AspNetCore.Mvc.Testing;
 namespace AquaGas.IntegrationTests.E2E.Auth;
 
 [Collection("Integration")]
-public class AuthFlowTests
+public class AuthFlowTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public AuthFlowTests(CustomWebApplicationFactory factory)
+    public AuthFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task FullAuthCycle_Login_UseToken_Refresh_Logout()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -67,7 +64,7 @@ public class AuthFlowTests
     [Fact]
     public async Task AccessProtectedEndpoint_WithoutToken_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient(
+        var client = Factory.CreateClient(
             new WebApplicationFactoryClientOptions { HandleCookies = false });
 
         var response = await client.GetAsync("/api/customers");

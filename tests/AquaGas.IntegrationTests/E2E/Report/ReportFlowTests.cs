@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.E2E.Report;
 
 [Collection("Integration")]
-public class ReportFlowTests
+public class ReportFlowTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public ReportFlowTests(CustomWebApplicationFactory factory)
+    public ReportFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task SalesReport_AfterCreatingSale_ReflectsInReport()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var productResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -60,7 +57,7 @@ public class ReportFlowTests
     [Fact]
     public async Task StockMovementReport_AfterStockEntry_ReflectsInReport()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var productResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -96,7 +93,7 @@ public class ReportFlowTests
     [Fact]
     public async Task ContractPenaltyReport_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var reportResponse = await client.GetAsync("/api/reports/contract-penalties");
         reportResponse.StatusCode.Should().Be(HttpStatusCode.OK);

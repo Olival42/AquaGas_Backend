@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.E2E.Customer;
 
 [Collection("Integration")]
-public class CustomerFlowTests
+public class CustomerFlowTests : IntegrationTestBase
 {
     private readonly CustomWebApplicationFactory _factory;
 
@@ -18,7 +18,7 @@ public class CustomerFlowTests
         PropertyNameCaseInsensitive = true
     };
 
-    public CustomerFlowTests(CustomWebApplicationFactory factory)
+    public CustomerFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
         _factory = factory;
     }
@@ -26,12 +26,12 @@ public class CustomerFlowTests
     [Fact]
     public async Task FullCustomerLifecycle_Register_Get_Update_Deactivate()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Cliente Lifecycle E2E",
-            Document = "15935748020",
+            Document = "52998225292",
             Email = "lifecycle.e2e@email.com",
             Phone = "11999995001",
             Address = new
@@ -79,12 +79,12 @@ public class CustomerFlowTests
     [Fact]
     public async Task CustomerWithSaleHistory_RegisterCustomer_MakeSale_CheckHistory()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var customerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Cliente Historico E2E",
-            Document = "26384715044",
+            Document = "71461516030",
             Email = "historico.e2e@email.com",
             Phone = "11999995002",
             Address = new
@@ -92,7 +92,7 @@ public class CustomerFlowTests
                 Street = "Rua Historico",
                 Neighborhood = "Centro",
                 Number = "100",
-                City = "São Paulo",
+                City = "Sao Paulo",
                 Cep = "01001000"
             }
         });

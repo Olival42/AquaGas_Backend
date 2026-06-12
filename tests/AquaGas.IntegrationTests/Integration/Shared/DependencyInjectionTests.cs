@@ -32,13 +32,10 @@ using Microsoft.Extensions.DependencyInjection;
 namespace AquaGas.IntegrationTests.Integration.Shared;
 
 [Collection("Integration")]
-public class DependencyInjectionTests
+public class DependencyInjectionTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
-    public DependencyInjectionTests(CustomWebApplicationFactory factory)
+    public DependencyInjectionTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Theory]
@@ -51,7 +48,7 @@ public class DependencyInjectionTests
     [InlineData(typeof(AppDbContext))]
     public void DbContexts_AreRegistered(Type dbContextType)
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetService(dbContextType);
         service.Should().NotBeNull($"{dbContextType.Name} should be registered");
     }
@@ -70,7 +67,7 @@ public class DependencyInjectionTests
     [InlineData(typeof(IAuditLogRepository))]
     public void Repositories_AreRegistered(Type repoType)
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetService(repoType);
         service.Should().NotBeNull($"{repoType.Name} should be registered");
     }
@@ -82,7 +79,7 @@ public class DependencyInjectionTests
     [InlineData(typeof(ITokenBlacklistService))]
     public void SharedServices_AreRegistered(Type serviceType)
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetService(serviceType);
         service.Should().NotBeNull($"{serviceType.Name} should be registered");
     }
@@ -103,7 +100,7 @@ public class DependencyInjectionTests
     [InlineData(typeof(IGetAllPlans))]
     public void UseCases_AreRegistered(Type useCaseType)
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = Factory.Services.CreateScope();
         var service = scope.ServiceProvider.GetService(useCaseType);
         service.Should().NotBeNull($"{useCaseType.Name} should be registered");
     }

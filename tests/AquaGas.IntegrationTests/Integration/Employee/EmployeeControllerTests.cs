@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Employee;
 
 [Collection("Integration")]
-public class EmployeeControllerTests
+public class EmployeeControllerTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public EmployeeControllerTests(CustomWebApplicationFactory factory)
+    public EmployeeControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task Register_AsManager_ReturnsCreated()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -39,9 +36,9 @@ public class EmployeeControllerTests
             Employee = new
             {
                 Name = "Funcionário Teste",
-                Cpf = "19157343060",
+                Cpf = "52998224997",
                 Email = "func.teste@empresa.com",
-                Phone = "11988880001"
+                Phone = "11988880002"
             }
         });
 
@@ -56,7 +53,7 @@ public class EmployeeControllerTests
     [Fact]
     public async Task Register_WhenUnauthenticated_ReturnsUnauthorized()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -64,7 +61,7 @@ public class EmployeeControllerTests
             Employee = new
             {
                 Name = "Sem Auth",
-                Cpf = "72038514070",
+                Cpf = "52998224806",
                 Email = "noauth@empresa.com",
                 Phone = "11988880099"
             }
@@ -76,7 +73,7 @@ public class EmployeeControllerTests
     [Fact]
     public async Task GetById_NonExisting_ReturnsNotFound()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync($"/api/employees/{Guid.NewGuid()}");
 
@@ -86,7 +83,7 @@ public class EmployeeControllerTests
     [Fact]
     public async Task GetAll_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var response = await client.GetAsync("/api/employees");
 
@@ -99,15 +96,15 @@ public class EmployeeControllerTests
     [Fact]
     public async Task Register_GetById_ReturnsRegisteredEmployee()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/employees/register", new
         {
             User = new { UserName = "empget01", Password = "Senha@123", Role = "Employee" },
             Employee = new
             {
-                Name = "Busca Funcionario",
-                Cpf = "31040694004",
+                Name = "Busca Funcionário",
+                Cpf = "52998224997",
                 Email = "busca.func@empresa.com",
                 Phone = "11988880002"
             }
@@ -123,13 +120,13 @@ public class EmployeeControllerTests
 
         var getJson = await getResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         getJson.GetProperty("data").GetProperty("employee").GetProperty("name").GetString()
-            .Should().Be("Busca Funcionario");
+            .Should().Be("Busca Funcionário");
     }
 
     [Fact]
     public async Task Deactivate_AsManager_ReturnsNoContent()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -137,7 +134,7 @@ public class EmployeeControllerTests
             Employee = new
             {
                 Name = "Deletar Func",
-                Cpf = "67890712000",
+                Cpf = "52998225020",
                 Email = "del.func@empresa.com",
                 Phone = "11988880003"
             }
@@ -155,7 +152,7 @@ public class EmployeeControllerTests
     [Fact]
     public async Task Update_AsManager_ReturnsOk()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/employees/register", new
         {
@@ -163,7 +160,7 @@ public class EmployeeControllerTests
             Employee = new
             {
                 Name = "Update Func",
-                Cpf = "56413892075",
+                Cpf = "79522375004",
                 Email = "upd.func@empresa.com",
                 Phone = "11988880004"
             }

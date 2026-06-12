@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Product;
 
 [Collection("Integration")]
-public class ProductInfrastructureTests
+public class ProductInfrastructureTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public ProductInfrastructureTests(CustomWebApplicationFactory factory)
+    public ProductInfrastructureTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task StockMovement_Exit_ReducesQuantity()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -55,7 +52,7 @@ public class ProductInfrastructureTests
     [Fact]
     public async Task StockMovement_ExitExceedsStock_ReturnsError()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -82,7 +79,7 @@ public class ProductInfrastructureTests
     [Fact]
     public async Task MultipleStockMovements_TrackCumulativeQuantity()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -110,7 +107,7 @@ public class ProductInfrastructureTests
     [Fact]
     public async Task DeactivatedProduct_NotReturnedInGetById()
     {
-        var client = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var client = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
@@ -123,8 +120,20 @@ public class ProductInfrastructureTests
         var json = await registerResponse.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         var productId = json.GetProperty("data").GetProperty("id").GetString()!;
 
+        // First decrease stock to 0
+        var decreaseContent = JsonContent.Create(new
+        {
+            StockMovementType = "Exit",
+            Quantity = 10,
+            Reason = "Decrease to zero for deactivation"
+        });
+        var decreaseResponse = await client.PatchAsync($"/api/products/{productId}/stock", decreaseContent);
+        decreaseResponse.EnsureSuccessStatusCode();
+
+        // Now deactivate
         await client.DeleteAsync($"/api/products/{productId}");
 
+        // Check GetById after deactivation
         var getResponse = await client.GetAsync($"/api/products/{productId}");
         getResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

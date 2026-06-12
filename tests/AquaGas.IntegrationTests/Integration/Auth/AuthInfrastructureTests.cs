@@ -9,24 +9,21 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.Integration.Auth;
 
 [Collection("Integration")]
-public class AuthInfrastructureTests
+public class AuthInfrastructureTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public AuthInfrastructureTests(CustomWebApplicationFactory factory)
+    public AuthInfrastructureTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task TokenBlacklist_AfterLogout_TokenIsRevoked()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -52,7 +49,7 @@ public class AuthInfrastructureTests
     [Fact]
     public async Task RefreshToken_IsStoredInCookie_AndWorksForRenewal()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -72,7 +69,7 @@ public class AuthInfrastructureTests
     [Fact]
     public async Task JwtService_TokenContainsCorrectClaims()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
@@ -94,7 +91,7 @@ public class AuthInfrastructureTests
     [Fact]
     public async Task PasswordHasher_Argon2_ValidatesCorrectly()
     {
-        var client = _factory.CreateClient();
+        var client = Factory.CreateClient();
 
         var validLogin = await client.PostAsJsonAsync("/api/auth/login", new
         {

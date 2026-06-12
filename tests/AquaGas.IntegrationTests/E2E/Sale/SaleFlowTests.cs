@@ -9,7 +9,7 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.E2E.Sale;
 
 [Collection("Integration")]
-public class SaleFlowTests
+public class SaleFlowTests : IntegrationTestBase
 {
     private readonly CustomWebApplicationFactory _factory;
 
@@ -18,7 +18,7 @@ public class SaleFlowTests
         PropertyNameCaseInsensitive = true
     };
 
-    public SaleFlowTests(CustomWebApplicationFactory factory)
+    public SaleFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
         _factory = factory;
     }
@@ -30,7 +30,7 @@ public class SaleFlowTests
 
         var productResponse = await client.PostAsJsonAsync("/api/products/register", new
         {
-            Name = "Botijão E2E Sale",
+            Name = "Botijao E2E Sale",
             Type = "Gas",
             Price = 100.00m,
             Quantity = 30
@@ -44,7 +44,7 @@ public class SaleFlowTests
         var customerResponse = await client.PostAsJsonAsync("/api/customers/register", new
         {
             Name = "Cliente E2E Sale",
-            Document = "93748261003",
+            Document = "52998224725",
             Email = "e2e.sale@email.com",
             Phone = "11999991000",
             Address = new
@@ -52,7 +52,7 @@ public class SaleFlowTests
                 Street = "Rua E2E",
                 Neighborhood = "Centro",
                 Number = "1",
-                City = "São Paulo",
+                City = "Sao Paulo",
                 Cep = "01001000"
             }
         });

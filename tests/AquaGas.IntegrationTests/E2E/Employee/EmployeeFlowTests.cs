@@ -9,34 +9,31 @@ using FluentAssertions;
 namespace AquaGas.IntegrationTests.E2E.Employee;
 
 [Collection("Integration")]
-public class EmployeeFlowTests
+public class EmployeeFlowTests : IntegrationTestBase
 {
-    private readonly CustomWebApplicationFactory _factory;
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public EmployeeFlowTests(CustomWebApplicationFactory factory)
+    public EmployeeFlowTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task FullEmployeeLifecycle_Register_Login_Operate_Update_Deactivate()
     {
-        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         var registerResponse = await managerClient.PostAsJsonAsync("/api/employees/register", new
         {
             User = new { UserName = "e2eemp001", Password = "Senha@123", Role = "Employee" },
             Employee = new
             {
-                Name = "Funcionario E2E Lifecycle",
-                Cpf = "48253617090",
+                Name = "Funcionário E2E Lifecycle",
+                Cpf = "52998224997",
                 Email = "e2e.emp.lifecycle@empresa.com",
-                Phone = "11988885001"
+                Phone = "11988885002"
             }
         });
         registerResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -44,7 +41,7 @@ public class EmployeeFlowTests
         var employeeId = registerJson.GetProperty("data").GetProperty("employee")
             .GetProperty("id").GetString()!;
 
-        var empClient = _factory.CreateClient();
+        var empClient = Factory.CreateClient();
         var loginResponse = await empClient.PostAsJsonAsync("/api/auth/login", new
         {
             UserName = "e2eemp001",
@@ -75,7 +72,7 @@ public class EmployeeFlowTests
     [Fact]
     public async Task EmployeeRole_CannotRegisterEmployee()
     {
-        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         await managerClient.PostAsJsonAsync("/api/employees/register", new
         {
@@ -83,13 +80,13 @@ public class EmployeeFlowTests
             Employee = new
             {
                 Name = "Employee Sem Permissao",
-                Cpf = "73518264009",
+                Cpf = "98765432100",
                 Email = "e2e.noperm@empresa.com",
                 Phone = "11988885002"
             }
         });
 
-        var empClient = _factory.CreateClient();
+        var empClient = Factory.CreateClient();
         var loginResponse = await empClient.PostAsJsonAsync("/api/auth/login", new
         {
             UserName = "e2eemp002",
@@ -105,7 +102,7 @@ public class EmployeeFlowTests
             Employee = new
             {
                 Name = "Nao Deveria",
-                Cpf = "91847362005",
+                Cpf = "52998225454",
                 Email = "fail@empresa.com",
                 Phone = "11988885099"
             }
@@ -117,7 +114,7 @@ public class EmployeeFlowTests
     [Fact]
     public async Task EmployeeRole_CannotAccessReports()
     {
-        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(_factory);
+        var managerClient = await AuthHelper.CreateAuthenticatedClientAsync(Factory);
 
         await managerClient.PostAsJsonAsync("/api/employees/register", new
         {
@@ -125,13 +122,13 @@ public class EmployeeFlowTests
             Employee = new
             {
                 Name = "Employee Report Block",
-                Cpf = "62413859007",
+                Cpf = "52998225535",
                 Email = "e2e.noreport@empresa.com",
                 Phone = "11988885003"
             }
         });
 
-        var empClient = _factory.CreateClient();
+        var empClient = Factory.CreateClient();
         var loginResponse = await empClient.PostAsJsonAsync("/api/auth/login", new
         {
             UserName = "e2eemp003",
